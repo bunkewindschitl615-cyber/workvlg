@@ -1,0 +1,43 @@
+---
+import Footer from '@/components/layout/Footer.astro';
+import Header from '@/components/layout/Header.astro';
+import MobileContactBar from '@/components/layout/MobileContactBar.astro';
+import type { SeoProps } from '@/components/seo/SeoHead.astro';
+import BaseLayout from './BaseLayout.astro';
+
+type Props = SeoProps;
+---
+
+<BaseLayout {...Astro.props}>
+  <a href="#main" class="skip-link">Перейти к содержимому</a>
+  <Header />
+  <main id="main" tabindex="-1">
+    <slot />
+  </main>
+  <Footer />
+  <MobileContactBar />
+</BaseLayout>
+
+<style>
+  .skip-link {
+    position: absolute;
+    top: var(--sp-2);
+    left: var(--sp-2);
+    z-index: calc(var(--z-overlay) + 1);
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--r-md);
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus {
+    transform: none;
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

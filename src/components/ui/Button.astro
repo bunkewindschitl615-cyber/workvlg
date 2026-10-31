@@ -1,0 +1,144 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Icon from './Icon.astro';
+import type { IconName } from './icons';
+
+type Variant = 'primary' | 'secondary' | 'ghost';
+type Size = 'sm' | 'md' | 'lg';
+
+interface BaseProps {
+  variant?: Variant;
+  size?: Size;
+  icon?: IconName;
+  iconEnd?: IconName;
+  block?: boolean;
+  class?: string;
+}
+
+type LinkProps = BaseProps & Omit<HTMLAttributes<'a'>, keyof BaseProps> & { href: string; external?: boolean };
+type ButtonProps = BaseProps & Omit<HTMLAttributes<'button'>, keyof BaseProps> & { href?: never; external?: never };
+
+type Props = LinkProps | ButtonProps;
+
+const { variant = 'primary', size = 'md', icon, iconEnd, block = false, class: className, external, ...attrs } = Astro.props;
+const classes = ['btn', `btn--${variant}`, `btn--${size}`, block && 'btn--block', className];
+const iconSize = size === 'lg' ? 22 : 20;
+const externalAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+
+{
+  typeof attrs.href === 'string' ? (
+    <a class:list={classes} {...externalAttrs} {...(attrs as HTMLAttributes<'a'>)}>
+      {icon && <Icon name={icon} size={iconSize} />}
+      <span><slot /></span>
+      {iconEnd && <Icon name={iconEnd} size={iconSize} class="btn__end" />}
+    </a>
+  ) : (
+    <button class:list={classes} type="button" {...(attrs as HTMLAttributes<'button'>)}>
+      {icon && <Icon name={icon} size={iconSize} />}
+      <span><slot /></span>
+      {iconEnd && <Icon name={iconEnd} size={iconSize} class="btn__end" />}
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    --btn-h: var(--tap-min);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    min-height: var(--btn-h);
+    padding: 0 var(--sp-6);
+    border: 1px solid transparent;
+    border-radius: var(--r-md);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease),
+      box-shadow var(--dur) var(--ease),
+      transform var(--dur-fast) var(--ease);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .btn--sm {
+    --btn-h: 2.5rem;
+    padding: 0 var(--sp-4);
+    font-size: var(--fs-sm);
+  }
+
+  .btn--lg {
+    --btn-h: 3.5rem;
+    padding: 0 var(--sp-8);
+    font-size: var(--fs-lg);
+  }
+
+  .btn--block {
+    display: flex;
+    width: 100%;
+  }
+
+  .btn--primary {
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+
+  .btn--primary:hover {
+    background: var(--c-accent-hover);
+    color: var(--c-on-accent);
+    box-shadow: var(--shadow-accent);
+  }
+
+  .btn--primary:active {
+    background: var(--c-accent-active);
+  }
+
+  .btn--secondary {
+    background: var(--c-surface-2);
+    border-color: var(--c-border-strong);
+    color: var(--c-text);
+  }
+
+  .btn--secondary:hover {
+    background: var(--c-surface-3);
+    border-color: var(--c-accent-line);
+    color: var(--c-text);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--c-text);
+  }
+
+  .btn--ghost:hover {
+    background: var(--c-surface);
+    color: var(--c-accent);
+  }
+
+  .btn :global(.btn__end) {
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .btn:hover :global(.btn__end) {
+    transform: translateX(3px);
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+interface Props {
+  id?: string;
+  /** Small label above the heading, e.g. "01 / Услуги". */
+  eyebrow?: string;
+  title?: string;
+  lead?: string;
+  as?: 'h1' | 'h2';
+  tone?: 'default' | 'elevated' | 'grid';
+  align?: 'start' | 'center';
+  class?: string;
+}
+
+const { id, eyebrow, title, lead, as: Heading = 'h2', tone = 'default', align = 'start', class: className } = Astro.props;
+const headingId = id && title ? `${id}-title` : undefined;
+---
+
+<section id={id} class:list={['section', `section--${tone}`, tone === 'grid' && 'tech-grid', className]} aria-labelledby={headingId}>
+  <div class="container">
+    {
+      (eyebrow || title || lead) && (
+        <header class:list={['section__head', `section__head--${align}`]}>
+          {eyebrow && <p class="section__eyebrow mono">{eyebrow}</p>}
+          {title && (
+            <Heading id={headingId} class="section__title">
+              {title}
+            </Heading>
+          )}
+          {lead && <p class="section__lead lead">{lead}</p>}
+        </header>
+      )
+    }
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: var(--section-y);
+  }
+
+  .section--elevated {
+    background: var(--c-bg-elev);
+    border-block: 1px solid var(--c-border);
+  }
+
+  .section--grid {
+    border-block: 1px solid var(--c-border);
+  }
+
+  .section__head {
+    margin-bottom: var(--sp-10);
+    max-width: 48rem;
+  }
+
+  .section__head--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .section__head--center .section__lead {
+    margin-inline: auto;
+  }
+
+  .section__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-4);
+    color: var(--c-accent);
+    text-transform: uppercase;
+  }
+
+  .section__eyebrow::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--c-accent);
+  }
+
+  .section__title {
+    margin-bottom: var(--sp-4);
+  }
+
+  .section__lead {
+    margin-bottom: 0;
+  }
+</style>

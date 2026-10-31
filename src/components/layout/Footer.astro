@@ -1,0 +1,194 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Logo from '@/components/ui/Logo.astro';
+import { contactChannels } from '@/config/contacts';
+import { LEAD_HREF, mainNav } from '@/config/navigation';
+import { site } from '@/config/site';
+
+const year = new Date().getFullYear();
+const legalNotes = contactChannels.flatMap((channel) => (channel.legalNote ? [channel.legalNote] : []));
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__cta">
+      <div>
+        <p class="site-footer__cta-title">Опишите задачу — подберём решение</p>
+        <p class="text-muted">От мелкого бытового ремонта до комплексных строительных работ.</p>
+      </div>
+      <Button href={LEAD_HREF} size="lg" iconEnd="arrow-right">Оставить заявку</Button>
+    </div>
+
+    <div class="site-footer__grid">
+      <div class="site-footer__about">
+        <Logo />
+        <p class="text-muted">Ремонт, отделка и строительные работы. Одна команда вместо поиска отдельных мастеров.</p>
+        <p class="site-footer__region">
+          <Icon name="map-pin" size={18} />
+          {site.region.city} и {site.region.area}
+        </p>
+      </div>
+
+      <nav aria-label="Разделы сайта">
+        <p class="site-footer__heading">Разделы</p>
+        <ul class="site-footer__list">
+          {
+            mainNav.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      {
+        contactChannels.length > 0 && (
+          <div>
+            <p class="site-footer__heading">Связаться</p>
+            <ul class="site-footer__list">
+              {contactChannels.map((channel) => (
+                <li>
+                  <a href={channel.href} class="site-footer__channel" {...(channel.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                    <Icon name={channel.icon} size={18} />
+                    <span>
+                      <span class="site-footer__channel-label">{channel.label}</span>
+                      {channel.display}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+
+    <div class="site-footer__bottom">
+      <p>© {year} {site.name}</p>
+      {legalNotes.map((note) => <p class="site-footer__note">* {note}</p>)}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: auto;
+    padding-block: var(--sp-16) var(--sp-8);
+    background: var(--c-bg-elev);
+    border-top: 1px solid var(--c-border);
+  }
+
+  .site-footer__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-6);
+    padding: var(--sp-8);
+    margin-bottom: var(--sp-12);
+    border: 1px solid var(--c-accent-line);
+    border-radius: var(--r-lg);
+    background: linear-gradient(120deg, var(--c-accent-soft), transparent 60%), var(--c-surface);
+  }
+
+  .site-footer__cta p {
+    margin: 0;
+  }
+
+  .site-footer__cta-title {
+    margin-bottom: var(--sp-2) !important;
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-snug);
+  }
+
+  .site-footer__grid {
+    display: grid;
+    gap: var(--sp-10);
+  }
+
+  @media (min-width: 768px) {
+    .site-footer__grid {
+      grid-template-columns: 1.6fr 1fr 1.2fr;
+    }
+  }
+
+  .site-footer__about p {
+    margin-top: var(--sp-4);
+  }
+
+  .site-footer__region {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    color: var(--c-text);
+  }
+
+  .site-footer__region :global(.icon) {
+    color: var(--c-accent);
+  }
+
+  .site-footer__heading {
+    margin-bottom: var(--sp-4);
+    color: var(--c-text-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .site-footer__list {
+    display: grid;
+    gap: var(--sp-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-footer__list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--c-text-muted);
+    text-decoration: none;
+  }
+
+  .site-footer__list a:hover {
+    color: var(--c-accent);
+  }
+
+  .site-footer__channel {
+    gap: var(--sp-3);
+  }
+
+  .site-footer__channel :global(.icon) {
+    color: var(--c-accent);
+  }
+
+  .site-footer__channel-label {
+    display: block;
+    color: var(--c-text-subtle);
+    font-size: var(--fs-xs);
+    line-height: 1.2;
+  }
+
+  .site-footer__bottom {
+    display: grid;
+    gap: var(--sp-2);
+    margin-top: var(--sp-12);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--c-border);
+    color: var(--c-text-subtle);
+    font-size: var(--fs-sm);
+  }
+
+  .site-footer__bottom p {
+    margin: 0;
+  }
+
+  .site-footer__note {
+    font-size: var(--fs-xs);
+  }
+</style>

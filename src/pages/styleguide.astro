@@ -1,0 +1,209 @@
+---
+// Internal design-system showcase: noindex, excluded from the sitemap. Remove or protect before launch.
+import Badge from '@/components/ui/Badge.astro';
+import Button from '@/components/ui/Button.astro';
+import Card from '@/components/ui/Card.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { icons, type IconName } from '@/components/ui/icons';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import Section from '@/components/ui/Section.astro';
+import PageLayout from '@/layouts/PageLayout.astro';
+
+const colors = [
+  ['--c-bg', 'Фон страницы'],
+  ['--c-bg-elev', 'Фон секций'],
+  ['--c-surface', 'Карточки'],
+  ['--c-surface-2', 'Карточки: наведение'],
+  ['--c-border-strong', 'Границы'],
+  ['--c-text', 'Основной текст'],
+  ['--c-text-muted', 'Второстепенный текст'],
+  ['--c-text-subtle', 'Подписи'],
+  ['--c-accent', 'Акцент'],
+  ['--c-success', 'Успех'],
+  ['--c-warning', 'Предупреждение'],
+  ['--c-danger', 'Ошибка'],
+] as const;
+
+const iconNames = Object.keys(icons) as IconName[];
+---
+
+<PageLayout title="Дизайн-система" description="Служебная страница с образцами компонентов сайта." noindex>
+  <Section tone="grid" as="h1" eyebrow="Служебная страница" title="Дизайн-система WORKVLG" lead="Цвета, типографика и компоненты, из которых собираются все страницы сайта." />
+
+  <Section eyebrow="01 / Цвета" title="Палитра">
+    <ul class="swatches">
+      {
+        colors.map(([token, label]) => (
+          <li class="swatch">
+            <span class="swatch__color" style={`background: var(${token})`} />
+            <span class="swatch__label">{label}</span>
+            <code class="swatch__token mono">{token}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Section tone="elevated" eyebrow="02 / Типографика" title="Шрифт Onest">
+    <div class="type-demo">
+      <p class="type-demo__meta mono">Display / 800</p>
+      <p class="type-demo__display">Ремонт без поиска десятка мастеров</p>
+      <p class="type-demo__meta mono">H2 / 700</p>
+      <h2>Основные направления работ</h2>
+      <p class="type-demo__meta mono">H3 / 700</p>
+      <h3>Ремонт квартир и домов</h3>
+      <p class="type-demo__meta mono">Lead</p>
+      <p class="lead">Опишите задачу — мы уточним детали, при необходимости приедем на объект и рассчитаем стоимость.</p>
+      <p class="type-demo__meta mono">Body / 400</p>
+      <p>
+        Основной текст набран крупно, 17–18 пикселей, с увеличенным межстрочным интервалом, чтобы его было удобно читать с телефона
+        на ходу. Длина строки ограничена, чтобы глаз не терялся на широких экранах. <a href="#">Ссылка в тексте</a> выделена акцентным цветом.
+      </p>
+      <p class="type-demo__meta mono">Mono / технические подписи</p>
+      <p class="mono text-muted">01 / Этап · 7 шагов · Волгоград и область</p>
+    </div>
+  </Section>
+
+  <Section eyebrow="03 / Кнопки" title="Кнопки и действия">
+    <div class="row">
+      <Button>Основная</Button>
+      <Button variant="secondary">Вторичная</Button>
+      <Button variant="ghost">Текстовая</Button>
+      <Button disabled>Недоступна</Button>
+    </div>
+    <div class="row">
+      <Button size="lg" iconEnd="arrow-right">Оставить заявку</Button>
+      <Button size="lg" variant="secondary" icon="phone">Позвонить</Button>
+      <Button size="sm" variant="secondary" icon="telegram">Telegram</Button>
+    </div>
+    <div class="row">
+      <Badge>Нейтральный</Badge>
+      <Badge tone="accent">Популярное</Badge>
+      <Badge tone="success">Выполнено</Badge>
+      <Badge tone="warning">Требует подтверждения</Badge>
+    </div>
+  </Section>
+
+  <Section tone="elevated" eyebrow="04 / Карточки" title="Карточки услуг и преимуществ">
+    <div class="grid">
+      <Card icon="wrench" index="01" title="Мастер на час" href="#">
+        <p>Небольшие бытовые задачи: повесить, собрать, заменить, починить.</p>
+      </Card>
+      <Card icon="home" index="02" title="Ремонт квартир" href="#">
+        <p>От косметического обновления до ремонта под ключ.</p>
+      </Card>
+      <Card icon="building" index="03" title="Общестроительные работы" href="#">
+        <p>Работы на объектах разного масштаба с организацией процесса.</p>
+      </Card>
+      <Card icon="shield" title="Карточка без ссылки">
+        <p>Используется для блоков «Почему выбирают нас» и «Как мы работаем».</p>
+      </Card>
+    </div>
+    <PlaceholderNotice subject="текст карточек" class="mt" />
+  </Section>
+
+  <Section eyebrow="05 / Иконки" title="Набор иконок">
+    <ul class="icons">
+      {
+        iconNames.map((name) => (
+          <li>
+            <Icon name={name} size={28} />
+            <code class="mono">{name}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+</PageLayout>
+
+<style>
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: var(--sp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .swatch {
+    display: grid;
+    gap: var(--sp-1);
+  }
+
+  .swatch__color {
+    height: 4.5rem;
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--r-md);
+    margin-bottom: var(--sp-2);
+  }
+
+  .swatch__label {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+  }
+
+  .swatch__token {
+    color: var(--c-text-subtle);
+  }
+
+  .type-demo__meta {
+    margin: var(--sp-8) 0 var(--sp-2);
+    color: var(--c-text-subtle);
+  }
+
+  .type-demo__meta:first-child {
+    margin-top: 0;
+  }
+
+  .type-demo__display {
+    font-size: var(--fs-display);
+    font-weight: var(--fw-black);
+    line-height: var(--lh-tight);
+    letter-spacing: -0.02em;
+    max-width: 20ch;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-6);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--sp-4);
+  }
+
+  .mt {
+    margin-top: var(--sp-6);
+  }
+
+  .icons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .icons li {
+    display: grid;
+    justify-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-4) var(--sp-2);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    color: var(--c-accent);
+  }
+
+  .icons code {
+    color: var(--c-text-subtle);
+    font-size: var(--fs-xs);
+  }
+</style>

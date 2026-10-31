@@ -1,0 +1,89 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import { getChannel, type ContactChannel } from '@/config/contacts';
+import { LEAD_HREF } from '@/config/navigation';
+
+const shortLabels: Partial<Record<ContactChannel['id'], string>> = {
+  phone: 'Позвонить',
+  telegram: 'Telegram',
+  max: 'MAX',
+};
+
+const quick = (['phone', 'telegram', 'max'] as const)
+  .map((id) => getChannel(id))
+  .filter((channel): channel is ContactChannel => Boolean(channel));
+---
+
+<nav class="mobile-bar" aria-label="Быстрая связь" style={`--cols: ${quick.length + 1}`}>
+  {
+    quick.map((channel) => (
+      <a href={channel.href} class="mobile-bar__item" {...(channel.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+        <Icon name={channel.icon} size={22} />
+        <span>{shortLabels[channel.id]}</span>
+      </a>
+    ))
+  }
+  <a href={LEAD_HREF} class="mobile-bar__item mobile-bar__item--cta">
+    <Icon name="message" size={22} />
+    <span>{quick.length > 0 ? 'Заявка' : 'Оставить заявку'}</span>
+  </a>
+</nav>
+
+<style>
+  .mobile-bar {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: var(--z-mobile-bar);
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-2) calc(var(--sp-2) + env(safe-area-inset-bottom));
+    background: rgb(17 19 22 / 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--c-border);
+  }
+
+  .mobile-bar__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: calc(var(--mobile-bar-h) - var(--sp-4));
+    border-radius: var(--r-md);
+    background: var(--c-surface-2);
+    color: var(--c-text);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  .mobile-bar__item:hover {
+    color: var(--c-text);
+  }
+
+  .mobile-bar__item :global(.icon) {
+    color: var(--c-accent);
+  }
+
+  .mobile-bar__item--cta {
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+
+  .mobile-bar__item--cta:hover {
+    color: var(--c-on-accent);
+  }
+
+  .mobile-bar__item--cta :global(.icon) {
+    color: var(--c-on-accent);
+  }
+
+  @media (min-width: 768px) {
+    .mobile-bar {
+      display: none;
+    }
+  }
+</style>

@@ -7,6 +7,7 @@ import {
   PUBLIC_TELEGRAM_URL,
   PUBLIC_VK_URL,
 } from 'astro:env/server';
+import type { IconName } from '@/components/ui/icons';
 
 export type ContactChannelId = 'phone' | 'telegram' | 'max' | 'vk' | 'instagram' | 'email';
 
@@ -16,9 +17,19 @@ export interface ContactChannel {
   href: string;
   display: string;
   external: boolean;
+  icon: IconName;
   /** Mandatory disclaimer that must be shown next to the channel. */
   legalNote?: string;
 }
+
+const CHANNEL_ICONS: Record<ContactChannelId, IconName> = {
+  phone: 'phone',
+  telegram: 'telegram',
+  max: 'max',
+  vk: 'vk',
+  instagram: 'instagram',
+  email: 'mail',
+};
 
 export const INSTAGRAM_LEGAL_NOTE =
   'Instagram принадлежит компании Meta, деятельность которой признана экстремистской и запрещена в России.';
@@ -37,7 +48,7 @@ function handleFromUrl(url: string): string {
 }
 
 function buildChannels(): ContactChannel[] {
-  const channels: ContactChannel[] = [];
+  const channels: Omit<ContactChannel, 'icon'>[] = [];
 
   if (PUBLIC_CONTACT_PHONE) {
     const phone = normalizePhone(PUBLIC_CONTACT_PHONE);
@@ -69,7 +80,7 @@ function buildChannels(): ContactChannel[] {
     channels.push({ id: 'email', label: 'Email', href: `mailto:${PUBLIC_CONTACT_EMAIL}`, display: PUBLIC_CONTACT_EMAIL, external: false });
   }
 
-  return channels;
+  return channels.map((channel) => ({ ...channel, icon: CHANNEL_ICONS[channel.id] }));
 }
 
 /** Only channels that are actually configured; unset ones are never rendered. */

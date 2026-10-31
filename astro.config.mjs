@@ -1,6 +1,6 @@
 // @ts-check
 import { existsSync } from 'node:fs';
-import { defineConfig, envField } from 'astro/config';
+import { defineConfig, envField, fontProviders } from 'astro/config';
 import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
 
@@ -10,7 +10,7 @@ if (existsSync('.env')) process.loadEnvFile('.env');
 const SITE_URL = process.env.SITE_URL || 'http://localhost:4321';
 
 /** Service pages that must never appear in the sitemap. */
-const SITEMAP_EXCLUDE = ['/404/', '/spasibo/'];
+const SITEMAP_EXCLUDE = ['/404/', '/spasibo/', '/styleguide/'];
 
 export default defineConfig({
   site: SITE_URL,
@@ -27,6 +27,20 @@ export default defineConfig({
     sitemap({
       filter: (page) => !SITEMAP_EXCLUDE.some((path) => new URL(page).pathname === path),
     }),
+  ],
+
+  // Font files are downloaded at build time and served from our own origin (no third-party requests).
+  fonts: [
+    {
+      provider: fontProviders.fontsource(),
+      name: 'Onest',
+      cssVariable: '--font-sans',
+      weights: ['400', '500', '600', '700', '800'],
+      styles: ['normal'],
+      subsets: ['cyrillic', 'latin'],
+      fallbacks: ['system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
+      display: 'swap',
+    },
   ],
 
   env: {

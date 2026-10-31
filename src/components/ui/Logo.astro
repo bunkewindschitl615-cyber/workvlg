@@ -1,0 +1,42 @@
+---
+// Temporary text wordmark until the owner provides the real logo.
+interface Props {
+  href?: string;
+  class?: string;
+}
+
+const { href = '/', class: className } = Astro.props;
+---
+
+<a href={href} class:list={['logo', className]} aria-label="WORKVLG — на главную">
+  <svg class="logo__mark" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+    <rect width="32" height="32" rx="6" fill="var(--c-accent)"></rect>
+    <path d="M6 9h3.2l2.3 10.2L14.2 9h3.6l2.7 10.2L22.8 9H26l-4 14h-3.4L16 13.6 13.4 23H10z" fill="var(--c-on-accent)"></path>
+  </svg>
+  <span class="logo__text">WORK<span class="logo__accent">VLG</span></span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: var(--tap-min);
+    color: var(--c-text);
+    text-decoration: none;
+  }
+
+  .logo:hover {
+    color: var(--c-text);
+  }
+
+  .logo__text {
+    font-size: 1.25rem;
+    font-weight: var(--fw-black);
+    letter-spacing: 0.04em;
+  }
+
+  .logo__accent {
+    color: var(--c-accent);
+  }
+</style>

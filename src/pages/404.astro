@@ -1,27 +1,38 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import { LEAD_HREF } from '@/config/navigation';
+import PageLayout from '@/layouts/PageLayout.astro';
 ---
 
-<BaseLayout title="Страница не найдена" description="Запрошенная страница не существует или была перемещена." noindex>
-  <main class="not-found">
-    <p class="code" aria-hidden="true">404</p>
-    <h1>Страница не найдена</h1>
-    <p>Возможно, адрес набран с ошибкой или страница была перемещена.</p>
-    <a href="/">Вернуться на главную</a>
-  </main>
-</BaseLayout>
+<PageLayout title="Страница не найдена" description="Запрошенная страница не существует или была перемещена." noindex>
+  <section class="not-found tech-grid">
+    <div class="container">
+      <p class="not-found__code mono" aria-hidden="true">ERROR 404</p>
+      <h1>Страница не найдена</h1>
+      <p class="lead">Возможно, адрес набран с ошибкой или страница была перемещена.</p>
+      <div class="not-found__actions">
+        <Button href="/" icon="home">На главную</Button>
+        <Button href={LEAD_HREF} variant="secondary" icon="message">Оставить заявку</Button>
+      </div>
+    </div>
+  </section>
+</PageLayout>
 
 <style>
   .not-found {
-    max-width: 40rem;
-    margin: 0 auto;
-    padding: 6rem 1.25rem;
+    padding-block: var(--sp-24);
+    border-bottom: 1px solid var(--c-border);
   }
 
-  .code {
-    margin: 0;
-    font-size: 4rem;
-    font-weight: 800;
-    color: #ffc400;
+  .not-found__code {
+    margin-bottom: var(--sp-4);
+    color: var(--c-accent);
+  }
+
+  .not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    margin-top: var(--sp-8);
   }
 </style>

@@ -1,0 +1,358 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Logo from '@/components/ui/Logo.astro';
+import { contactChannels, getChannel } from '@/config/contacts';
+import { isActive, LEAD_HREF, mainNav } from '@/config/navigation';
+import { site } from '@/config/site';
+
+const pathname = Astro.url.pathname;
+const phone = getChannel('phone');
+const messengers = contactChannels.filter((channel) => channel.id !== 'phone' && channel.id !== 'email');
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <Logo />
+
+    <nav class="site-nav" aria-label="Основное меню">
+      <ul>
+        {
+          mainNav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isActive(item.href, pathname) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      {
+        phone && (
+          <a class="header-phone" href={phone.href}>
+            <Icon name="phone" size={18} />
+            {phone.display}
+          </a>
+        )
+      }
+      <Button href={LEAD_HREF} size="sm" class="header-cta">Оставить заявку</Button>
+      <button class="menu-toggle" type="button" popovertarget="mobile-nav" aria-controls="mobile-nav">
+        <Icon name="menu" />
+        <span>Меню</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div id="mobile-nav" class="mobile-nav" popover aria-label="Меню сайта">
+  <div class="mobile-nav__head">
+    <Logo />
+    <button class="menu-toggle" type="button" popovertarget="mobile-nav" popovertargetaction="hide">
+      <Icon name="close" />
+      <span>Закрыть</span>
+    </button>
+  </div>
+
+  <nav aria-label="Основное меню">
+    <ul class="mobile-nav__list">
+      {
+        mainNav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isActive(item.href, pathname) ? 'page' : undefined}>
+              {item.label}
+              <Icon name="arrow-right" size={20} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <div class="mobile-nav__footer">
+    <Button href={LEAD_HREF} size="lg" block icon="message">Оставить заявку</Button>
+    {phone && <Button href={phone.href} variant="secondary" size="lg" block icon="phone">{phone.display}</Button>}
+    {
+      messengers.length > 0 && (
+        <ul class="mobile-nav__channels">
+          {messengers.map((channel) => (
+            <li>
+              <Button href={channel.href} variant="secondary" external={channel.external} icon={channel.icon}>
+                {channel.label}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <p class="mobile-nav__region">
+      <Icon name="map-pin" size={18} />
+      {site.region.city} и {site.region.area}
+    </p>
+  </div>
+</div>
+
+<script>
+  const panel = document.getElementById('mobile-nav');
+
+  if (panel) {
+    const supportsPopover = 'popover' in HTMLElement.prototype;
+
+    if (!supportsPopover) {
+      document.querySelectorAll<HTMLButtonElement>('[popovertarget="mobile-nav"]').forEach((button) => {
+        button.addEventListener('click', () => panel.classList.toggle('is-open'));
+      });
+    }
+
+    // Same-page anchors (e.g. /#zayavka) don't navigate away, so close the menu explicitly.
+    panel.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (supportsPopover) panel.hidePopover();
+        else panel.classList.remove('is-open');
+      });
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: rgb(11 12 14 / 0.82);
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-6);
+    min-height: var(--header-h);
+  }
+
+  .site-nav {
+    display: none;
+    margin-right: auto;
+  }
+
+  .site-nav ul {
+    display: flex;
+    gap: var(--sp-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-nav a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-min);
+    padding: 0 var(--sp-3);
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+  }
+
+  .site-nav a:hover,
+  .site-nav a[aria-current='page'] {
+    color: var(--c-text);
+  }
+
+  .site-nav a[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: var(--sp-3);
+    right: var(--sp-3);
+    bottom: 0.55rem;
+    height: 2px;
+    background: var(--c-accent);
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-left: auto;
+  }
+
+  .header-phone {
+    display: none;
+    align-items: center;
+    gap: var(--sp-2);
+    color: var(--c-text);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .header-phone :global(.icon) {
+    color: var(--c-accent);
+  }
+
+  .site-header :global(.header-cta) {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: var(--tap-min);
+    padding: 0 var(--sp-3);
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    color: var(--c-text);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+  }
+
+  .menu-toggle:hover {
+    border-color: var(--c-accent-line);
+  }
+
+  @media (min-width: 768px) {
+    .site-header :global(.header-cta) {
+      display: inline-flex;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .site-nav {
+      display: block;
+    }
+
+    .site-header__actions {
+      margin-left: 0;
+    }
+
+    .site-header__actions > .menu-toggle {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .header-phone {
+      display: inline-flex;
+    }
+  }
+
+  /* ---------- Mobile menu panel ---------- */
+
+  .mobile-nav {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0 var(--gutter) calc(var(--sp-6) + env(safe-area-inset-bottom));
+    border: 0;
+    background: var(--c-bg);
+    color: var(--c-text);
+    overflow-y: auto;
+    flex-direction: column;
+    z-index: var(--z-overlay);
+  }
+
+  /* Separate rules on purpose: a browser that doesn't know :popover-open drops the whole selector list. */
+  .mobile-nav {
+    display: none;
+  }
+
+  .mobile-nav.is-open {
+    display: flex;
+  }
+
+  .mobile-nav:popover-open {
+    display: flex;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mobile-nav:popover-open {
+      animation: nav-in var(--dur) var(--ease);
+    }
+  }
+
+  @keyframes nav-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  .mobile-nav__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--header-h);
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  .mobile-nav__list {
+    margin: 0;
+    padding: var(--sp-2) 0;
+    list-style: none;
+  }
+
+  .mobile-nav__list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3.5rem;
+    border-bottom: 1px solid var(--c-border);
+    color: var(--c-text);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+  }
+
+  .mobile-nav__list a :global(.icon) {
+    color: var(--c-text-subtle);
+  }
+
+  .mobile-nav__list a[aria-current='page'] {
+    color: var(--c-accent);
+  }
+
+  .mobile-nav__footer {
+    display: grid;
+    gap: var(--sp-3);
+    margin-top: auto;
+    padding-top: var(--sp-8);
+  }
+
+  .mobile-nav__channels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mobile-nav__channels li {
+    flex: 1 1 8rem;
+  }
+
+  .mobile-nav__channels :global(.btn) {
+    width: 100%;
+  }
+
+  .mobile-nav__region {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin: var(--sp-2) 0 0;
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+  }
+</style>
