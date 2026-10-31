@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Runtime data: leads database and uploaded files contain personal data
+data/
+uploads/
+*.sqlite
+*.sqlite-journal
+*.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS and editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/
