@@ -10,9 +10,9 @@ import PopularTasks from '@/components/blocks/PopularTasks.astro';
 import Process from '@/components/blocks/Process.astro';
 import ProjectsPreview from '@/components/blocks/ProjectsPreview.astro';
 import PageLayout from '@/layouts/PageLayout.astro';
-import { getCollection } from 'astro:content';
+import { getServices } from '@/lib/services';
 
-const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const services = await getServices();
 ---
 
 <PageLayout>

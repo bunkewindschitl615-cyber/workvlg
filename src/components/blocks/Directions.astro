@@ -1,12 +1,12 @@
 ---
+import Button from '@/components/ui/Button.astro';
 import Card from '@/components/ui/Card.astro';
 import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
 import Section from '@/components/ui/Section.astro';
-import { leadHref } from '@/config/navigation';
-import type { CollectionEntry } from 'astro:content';
+import { serviceHref, type Service } from '@/lib/services';
 
 interface Props {
-  services: CollectionEntry<'services'>[];
+  services: Service[];
 }
 
 const { services } = Astro.props;
@@ -27,8 +27,8 @@ const hasDrafts = services.some((service) => !service.data.ownerConfirmed);
             icon={service.data.icon}
             index={String(i + 1).padStart(2, '0')}
             title={service.data.title}
-            href={leadHref(service.id)}
-            moreLabel="Обсудить задачу"
+            href={serviceHref(service)}
+            moreLabel={service.data.hasPage ? 'Подробнее' : 'Обсудить задачу'}
           >
             <p>{service.data.summary}</p>
           </Card>
@@ -36,7 +36,10 @@ const hasDrafts = services.some((service) => !service.data.ownerConfirmed);
       ))
     }
   </ul>
-  {hasDrafts && <PlaceholderNotice kind="draft" subject="перечень и описания направлений" class="directions__notice" />}
+  <div class="directions__footer">
+    <Button href="/uslugi/" variant="secondary" iconEnd="arrow-right">Все услуги</Button>
+    {hasDrafts && <PlaceholderNotice kind="draft" subject="перечень и описания направлений" />}
+  </div>
 </Section>
 
 <style>
@@ -49,7 +52,11 @@ const hasDrafts = services.some((service) => !service.data.ownerConfirmed);
     list-style: none;
   }
 
-  .directions :global(.directions__notice) {
-    margin-top: var(--sp-6);
+  .directions__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-4);
+    margin-top: var(--sp-8);
   }
 </style>

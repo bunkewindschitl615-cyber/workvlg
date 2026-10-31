@@ -1,0 +1,270 @@
+---
+import PageHero from '@/components/blocks/PageHero.astro';
+import Process from '@/components/blocks/Process.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import { LEAD_HREF, leadHref } from '@/config/navigation';
+import PageLayout from '@/layouts/PageLayout.astro';
+import { getServices, servicePath } from '@/lib/services';
+
+const services = await getServices();
+const hasDrafts = services.some((service) => !service.data.ownerConfirmed);
+---
+
+<PageLayout
+  title="Услуги в Волгограде и области"
+  description="Услуги WORKVLG в Волгограде и Волгоградской области: мастер на час, мелкий ремонт, ремонт квартир и домов, отделочные и общестроительные работы."
+>
+  <PageHero
+    breadcrumbs={[{ label: 'Услуги' }]}
+    eyebrow="Каталог услуг"
+    title="Услуги в Волгограде и области"
+    lead="Берёмся как за небольшие бытовые задачи, так и за комплексные строительные работы. Выберите направление или опишите задачу — подскажем, с чего начать."
+  >
+    <Fragment slot="actions">
+      <Button href={LEAD_HREF} size="lg" iconEnd="arrow-right">Оставить заявку</Button>
+    </Fragment>
+    <nav class="toc" aria-label="Направления на странице">
+      {services.map((service) => <a href={`#${service.id}`}>{service.data.title}</a>)}
+    </nav>
+  </PageHero>
+
+  <div class="container catalog">
+    {hasDrafts && <PlaceholderNotice kind="draft" subject="перечень и описания услуг" />}
+    {
+      services.map((service, i) => (
+        <article id={service.id} class="service-row" aria-labelledby={`${service.id}-title`}>
+          <div class="service-row__main">
+            <div class="service-row__head">
+              <span class="service-row__icon">
+                <Icon name={service.data.icon} size={28} />
+              </span>
+              <span class="service-row__index mono">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <h2 id={`${service.id}-title`} class="service-row__title">
+              {service.data.hasPage ? <a href={servicePath(service)}>{service.data.title}</a> : service.data.title}
+            </h2>
+            <p class="service-row__summary">{service.data.summary}</p>
+            <div class="service-row__actions">
+              <Button href={leadHref(service.id)} icon="message">
+                Заказать
+              </Button>
+              {service.data.hasPage && (
+                <Button href={servicePath(service)} variant="secondary" iconEnd="arrow-right">
+                  Подробнее об услуге
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div class="service-row__details">
+            {service.data.tasks.length > 0 || service.data.audience.length > 0 ? (
+              <>
+                {service.data.tasks.length > 0 && (
+                  <div>
+                    <h3 class="service-row__subtitle">Какие задачи решаем</h3>
+                    <ul class="checklist">
+                      {service.data.tasks.map((task) => (
+                        <li>
+                          <Icon name="check" size={18} />
+                          {task}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {service.data.audience.length > 0 && (
+                  <div>
+                    <h3 class="service-row__subtitle">Кому подходит</h3>
+                    <ul class="checklist checklist--muted">
+                      {service.data.audience.map((item) => (
+                        <li>
+                          <Icon name="users" size={18} />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p class="service-row__pending">
+                <Icon name="info" size={20} />
+                Подробный перечень работ по этому направлению уточняется. Опишите вашу задачу — расскажем, чем можем помочь.
+              </p>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <Process eyebrow="Процесс" />
+</PageLayout>
+
+<style>
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-top: var(--sp-10);
+  }
+
+  .toc a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0 var(--sp-4);
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--r-pill);
+    background: var(--c-surface);
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    border-color: var(--c-accent-line);
+    color: var(--c-text);
+  }
+
+  .catalog {
+    display: grid;
+    gap: var(--sp-4);
+    padding-block: var(--section-y);
+  }
+
+  .service-row {
+    display: grid;
+    gap: var(--sp-8);
+    padding: var(--sp-8);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    background: var(--c-surface);
+  }
+
+  @media (max-width: 479.98px) {
+    .service-row {
+      padding: var(--sp-5);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .service-row {
+      grid-template-columns: 1fr 1.2fr;
+      gap: var(--sp-12);
+    }
+  }
+
+  .service-row__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--sp-5);
+  }
+
+  .service-row__icon {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--r-md);
+    background: var(--c-accent-soft);
+    color: var(--c-accent);
+  }
+
+  .service-row__index {
+    color: var(--c-text-subtle);
+  }
+
+  .service-row__title {
+    margin-bottom: var(--sp-3);
+    font-size: var(--fs-2xl);
+  }
+
+  .service-row__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .service-row__title a:hover {
+    color: var(--c-accent);
+  }
+
+  .service-row__summary {
+    color: var(--c-text-muted);
+  }
+
+  .service-row__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    margin-top: var(--sp-6);
+  }
+
+  .service-row__details {
+    display: grid;
+    gap: var(--sp-6);
+    align-content: start;
+  }
+
+  @media (min-width: 640px) {
+    .service-row__details:has(> div + div) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .service-row__subtitle {
+    margin-bottom: var(--sp-3);
+    color: var(--c-text-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .checklist {
+    display: grid;
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-2);
+    line-height: var(--lh-snug);
+  }
+
+  .checklist :global(.icon) {
+    margin-top: 0.1rem;
+    color: var(--c-accent);
+  }
+
+  .checklist--muted li {
+    color: var(--c-text-muted);
+  }
+
+  .checklist--muted :global(.icon) {
+    color: var(--c-text-subtle);
+  }
+
+  .service-row__pending {
+    display: flex;
+    gap: var(--sp-3);
+    margin: 0;
+    padding: var(--sp-5);
+    border: 1px dashed var(--c-border-strong);
+    border-radius: var(--r-md);
+    color: var(--c-text-muted);
+  }
+
+  .service-row__pending :global(.icon) {
+    flex-shrink: 0;
+    color: var(--c-accent);
+  }
+</style>

@@ -16,6 +16,7 @@ export const icons = {
   'arrow-right': '<path d="M5 12h14M13 6l6 6-6 6"/>',
   'arrow-up-right': '<path d="M7 17 17 7M8 7h9v9"/>',
   'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+  'chevron-right': '<path d="m9 6 6 6-6 6"/>',
   menu: '<path d="M4 7h16M4 12h16M4 17h10"/>',
   close: '<path d="M6 6l12 12M18 6 6 18"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',

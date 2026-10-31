@@ -162,6 +162,35 @@ textarea {
   letter-spacing: 0.02em;
 }
 
+/* Long-form text rendered from Markdown */
+.prose {
+  max-width: var(--measure);
+  color: var(--c-text-muted);
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose h2 {
+  margin: var(--sp-10) 0 var(--sp-4);
+  color: var(--c-text);
+  font-size: var(--fs-2xl);
+}
+
+.prose h3 {
+  margin: var(--sp-8) 0 var(--sp-3);
+  color: var(--c-text);
+}
+
+.prose li + li {
+  margin-top: var(--sp-2);
+}
+
+.prose strong {
+  color: var(--c-text);
+}
+
 /* Engineering grid backdrop for hero and accent sections */
 .tech-grid {
   background-image:

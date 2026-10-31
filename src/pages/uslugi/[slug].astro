@@ -1,0 +1,246 @@
+---
+import PageHero from '@/components/blocks/PageHero.astro';
+import Process from '@/components/blocks/Process.astro';
+import Button from '@/components/ui/Button.astro';
+import Card from '@/components/ui/Card.astro';
+import Icon from '@/components/ui/Icon.astro';
+import MediaPlaceholder from '@/components/ui/MediaPlaceholder.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import Section from '@/components/ui/Section.astro';
+import { getChannel } from '@/config/contacts';
+import { leadHref } from '@/config/navigation';
+import PageLayout from '@/layouts/PageLayout.astro';
+import { getServices, serviceHref, type Service } from '@/lib/services';
+import type { GetStaticPaths } from 'astro';
+import { getEntries, render } from 'astro:content';
+
+export const getStaticPaths = (async () => {
+  const services = await getServices();
+  return services.filter((service) => service.data.hasPage).map((service) => ({ params: { slug: service.id }, props: { service } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  service: Service;
+}
+
+const { service } = Astro.props;
+const { data } = service;
+const { Content } = await render(service);
+const related = await getEntries(data.related);
+const lead = leadHref(service.id);
+const phone = getChannel('phone');
+const { seo, h1 } = data;
+if (!seo || !h1) throw new Error(`Услуга ${service.id}: для страницы нужны seo и h1`);
+---
+
+<PageLayout title={seo.title} description={seo.description}>
+  <PageHero breadcrumbs={[{ label: 'Услуги', href: '/uslugi/' }, { label: data.title }]} eyebrow="Услуга" title={h1} lead={data.summary}>
+    <Fragment slot="actions">
+      <Button href={lead} size="lg" iconEnd="arrow-right">Оставить заявку</Button>
+      {
+        phone && (
+          <Button href={phone.href} size="lg" variant="secondary" icon="phone">
+            {phone.display}
+          </Button>
+        )
+      }
+    </Fragment>
+    {
+      !data.ownerConfirmed && (
+        <div class="draft-note">
+          <PlaceholderNotice kind="draft" subject="описание услуги" />
+        </div>
+      )
+    }
+    <MediaPlaceholder slot="media" label={`Фото: ${data.title.toLowerCase()}`} ratio="4 / 3" icon={data.icon} />
+  </PageHero>
+
+  <Section eyebrow="01 / Об услуге" title="Подробнее об услуге">
+    <div class="about">
+      <div class="prose">
+        <Content />
+      </div>
+      <aside class="audience" aria-labelledby="audience-title">
+        <h3 id="audience-title">Кому подходит</h3>
+        <ul>
+          {
+            data.audience.map((item) => (
+              <li>
+                <Icon name="users" size={20} />
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+      </aside>
+    </div>
+  </Section>
+
+  <Section tone="elevated" eyebrow="02 / Задачи" title="Какие задачи решаем">
+    <ul class="tasks">
+      {
+        data.tasks.map((task) => (
+          <li>
+            <span class="tasks__check">
+              <Icon name="check" size={18} />
+            </span>
+            {task}
+          </li>
+        ))
+      }
+    </ul>
+    <div class="tasks__more">
+      <p>Не нашли свою задачу в списке? Опишите её своими словами — мы скажем, сможем ли помочь.</p>
+      <Button href={lead} variant="secondary" icon="message">Описать задачу</Button>
+    </div>
+  </Section>
+
+  <Section eyebrow="03 / Преимущества" title="Почему удобно обратиться к нам">
+    <ul class="benefits">
+      {
+        data.benefits.map((benefit) => (
+          <li>
+            <Card icon={benefit.icon} title={benefit.title}>
+              <p>{benefit.text}</p>
+            </Card>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Process eyebrow="04 / Процесс" leadHref={lead} />
+
+  {
+    related.length > 0 && (
+      <Section eyebrow="05 / Смотрите также" title="Связанные услуги">
+        <ul class="related">
+          {related.map((item) => (
+            <li>
+              <Card icon={item.data.icon} title={item.data.title} href={serviceHref(item)} moreLabel={item.data.hasPage ? 'Подробнее' : 'Обсудить задачу'}>
+                <p>{item.data.summary}</p>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      </Section>
+    )
+  }
+</PageLayout>
+
+<style>
+  .draft-note {
+    margin-top: var(--sp-6);
+  }
+
+  .about {
+    display: grid;
+    gap: var(--sp-10);
+  }
+
+  @media (min-width: 1024px) {
+    .about {
+      grid-template-columns: 1.6fr 1fr;
+      gap: var(--sp-16);
+      align-items: start;
+    }
+  }
+
+  .audience {
+    padding: var(--sp-6);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    background: var(--c-surface);
+  }
+
+  @media (min-width: 1024px) {
+    .audience {
+      position: sticky;
+      top: calc(var(--header-h) + var(--sp-6));
+    }
+  }
+
+  .audience h3 {
+    margin-bottom: var(--sp-5);
+    font-size: var(--fs-lg);
+  }
+
+  .audience ul {
+    display: grid;
+    gap: var(--sp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .audience li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    color: var(--c-text-muted);
+    line-height: var(--lh-snug);
+  }
+
+  .audience :global(.icon) {
+    color: var(--c-accent);
+  }
+
+  .tasks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tasks li {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-4) var(--sp-5);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-snug);
+  }
+
+  .tasks__check {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--r-pill);
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+
+  .tasks__more {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    margin-top: var(--sp-8);
+    padding: var(--sp-6);
+    border: 1px dashed var(--c-border-strong);
+    border-radius: var(--r-md);
+  }
+
+  .tasks__more p {
+    margin: 0;
+    color: var(--c-text-muted);
+  }
+
+  .benefits,
+  .related {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--sp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

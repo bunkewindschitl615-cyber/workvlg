@@ -1,0 +1,96 @@
+---
+import Breadcrumbs, { type Crumb } from '@/components/layout/Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  lead?: string;
+  eyebrow?: string;
+  breadcrumbs: Crumb[];
+}
+
+const { title, lead, eyebrow, breadcrumbs } = Astro.props;
+const hasMedia = Astro.slots.has('media');
+---
+
+<section class="page-hero tech-grid" aria-labelledby="page-title">
+  <div class:list={['container', 'page-hero__inner', hasMedia && 'page-hero__inner--media']}>
+    <div class="page-hero__content">
+      <Breadcrumbs items={breadcrumbs} />
+      {eyebrow && <p class="page-hero__eyebrow mono">{eyebrow}</p>}
+      <h1 id="page-title">{title}</h1>
+      {lead && <p class="lead">{lead}</p>}
+      {
+        Astro.slots.has('actions') && (
+          <div class="page-hero__actions">
+            <slot name="actions" />
+          </div>
+        )
+      }
+      <slot />
+    </div>
+    {
+      hasMedia && (
+        <div class="page-hero__media">
+          <slot name="media" />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    padding-block: var(--sp-8) var(--sp-16);
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  .page-hero__inner {
+    display: grid;
+    gap: var(--sp-10);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .page-hero {
+      padding-block: var(--sp-10) var(--sp-20);
+    }
+
+    .page-hero__inner--media {
+      grid-template-columns: 1.3fr 1fr;
+      gap: var(--sp-16);
+    }
+  }
+
+  .page-hero__eyebrow {
+    margin: var(--sp-10) 0 var(--sp-4);
+    color: var(--c-accent);
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin-top: var(--sp-8);
+    font-size: clamp(2rem, 1.4rem + 2.8vw, 3.5rem);
+    max-width: 20ch;
+  }
+
+  .page-hero__eyebrow + h1 {
+    margin-top: 0;
+  }
+
+  .lead {
+    margin-bottom: 0;
+  }
+
+  .page-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    margin-top: var(--sp-8);
+  }
+
+  @media (max-width: 479.98px) {
+    .page-hero__actions :global(.btn) {
+      flex: 1 1 100%;
+    }
+  }
+</style>

@@ -1,0 +1,64 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+
+export interface Crumb {
+  label: string;
+  /** Omit for the current page. */
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const items: Crumb[] = [{ label: 'Главная', href: '/' }, ...Astro.props.items];
+---
+
+<nav class="breadcrumbs" aria-label="Навигационная цепочка">
+  <ol>
+    {
+      items.map((item, i) => (
+        <li>
+          {i > 0 && <Icon name="chevron-right" size={14} class="breadcrumbs__sep" />}
+          {item.href ? <a href={item.href}>{item.label}</a> : <span aria-current="page">{item.label}</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-1) var(--sp-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-sm);
+  }
+
+  .breadcrumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .breadcrumbs a {
+    color: var(--c-text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--c-accent);
+  }
+
+  .breadcrumbs [aria-current='page'] {
+    color: var(--c-text-subtle);
+  }
+
+  .breadcrumbs :global(.breadcrumbs__sep) {
+    color: var(--c-text-subtle);
+  }
+</style>

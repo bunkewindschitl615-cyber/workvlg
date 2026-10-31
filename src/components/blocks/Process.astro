@@ -4,11 +4,19 @@ import Icon from '@/components/ui/Icon.astro';
 import Section from '@/components/ui/Section.astro';
 import { LEAD_HREF } from '@/config/navigation';
 import { processSteps } from '@/data/process';
+
+interface Props {
+  eyebrow?: string;
+  /** Lead target for the CTA cell, e.g. with a preselected category. */
+  leadHref?: string;
+}
+
+const { eyebrow = '06 / Процесс', leadHref = LEAD_HREF } = Astro.props;
 ---
 
 <Section
   tone="grid"
-  eyebrow="06 / Процесс"
+  eyebrow={eyebrow}
   title="Как мы работаем"
   lead={`${processSteps.length} понятных шагов от заявки до результата. На каждом этапе вы знаете, что происходит.`}
 >
@@ -29,7 +37,7 @@ import { processSteps } from '@/data/process';
     }
     <li class="step step--cta">
       <p class="step__title">Начнём с первого шага?</p>
-      <Button href={LEAD_HREF} iconEnd="arrow-right" block>Оставить заявку</Button>
+      <Button href={leadHref} iconEnd="arrow-right" block>Оставить заявку</Button>
     </li>
   </ol>
 </Section>
