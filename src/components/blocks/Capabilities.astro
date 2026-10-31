@@ -1,0 +1,114 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import MediaPlaceholder from '@/components/ui/MediaPlaceholder.astro';
+import Section from '@/components/ui/Section.astro';
+import { capabilities } from '@/data/home';
+---
+
+<Section tone="elevated" eyebrow="04 / Команда" title={capabilities.title}>
+  <div class="capabilities">
+    <div>
+      <div class="capabilities__stat">
+        <span class="capabilities__value">10+</span>
+        <span class="capabilities__label">лет практического опыта в строительной сфере</span>
+      </div>
+      <p class="lead">{capabilities.text}</p>
+      <ul class="capabilities__list">
+        {
+          capabilities.items.map((item) => (
+            <li>
+              <span class="capabilities__check">
+                <Icon name="check" size={18} />
+              </span>
+              {item}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="capabilities__media">
+      <MediaPlaceholder label="Фото команды за работой" ratio="4 / 3" icon="users" />
+      <MediaPlaceholder label="Техника и инструмент" ratio="4 / 3" icon="truck" />
+    </div>
+  </div>
+</Section>
+
+<style>
+  .capabilities {
+    display: grid;
+    gap: var(--sp-10);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .capabilities {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-16);
+    }
+  }
+
+  .capabilities__stat {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-6);
+    padding-bottom: var(--sp-6);
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  .capabilities__value {
+    color: var(--c-accent);
+    font-size: clamp(3rem, 2rem + 4vw, 4.5rem);
+    font-weight: var(--fw-black);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .capabilities__label {
+    max-width: 14rem;
+    color: var(--c-text-muted);
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-snug);
+  }
+
+  .capabilities__list {
+    display: grid;
+    gap: var(--sp-3);
+    margin: var(--sp-6) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .capabilities__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+  }
+
+  .capabilities__check {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: 0.05rem;
+    border-radius: var(--r-pill);
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+
+  .capabilities__media {
+    display: grid;
+    gap: var(--sp-4);
+  }
+
+  @media (min-width: 640px) {
+    .capabilities__media {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .capabilities__media > :global(:first-child) {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

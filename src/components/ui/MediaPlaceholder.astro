@@ -1,0 +1,99 @@
+---
+// Stand-in for a real photo until the owner provides one. Replace with <Image> from astro:assets.
+import Icon from './Icon.astro';
+import type { IconName } from './icons';
+
+interface Props {
+  /** What the real photo should show, e.g. "Фото выполненного ремонта". */
+  label: string;
+  /** CSS aspect-ratio, e.g. "4 / 5". */
+  ratio?: string;
+  icon?: IconName;
+  /** Small technical tag in the corner, e.g. "ДО" / "ПОСЛЕ". */
+  tag?: string;
+  class?: string;
+}
+
+const { label, ratio = '4 / 3', icon = 'camera', tag, class: className } = Astro.props;
+---
+
+<figure class:list={['media-ph tech-grid', className]} style={`aspect-ratio: ${ratio}`}>
+  <span class="media-ph__corner media-ph__corner--tl" aria-hidden="true"></span>
+  <span class="media-ph__corner media-ph__corner--br" aria-hidden="true"></span>
+  {tag && <span class="media-ph__tag mono">{tag}</span>}
+  <Icon name={icon} size={36} />
+  <figcaption>
+    <span class="media-ph__label">{label}</span>
+    <span class="media-ph__hint mono">Место для реальной фотографии</span>
+  </figcaption>
+</figure>
+
+<style>
+  .media-ph {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-3);
+    width: 100%;
+    margin: 0;
+    padding: var(--sp-6);
+    border: 1px dashed var(--c-border-strong);
+    border-radius: var(--r-lg);
+    background-color: var(--c-surface);
+    color: var(--c-text-subtle);
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .media-ph :global(.icon) {
+    color: var(--c-accent);
+  }
+
+  figcaption {
+    display: grid;
+    gap: var(--sp-1);
+  }
+
+  .media-ph__label {
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+  }
+
+  .media-ph__hint {
+    font-size: var(--fs-xs);
+  }
+
+  .media-ph__corner {
+    position: absolute;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-color: var(--c-accent);
+    border-style: solid;
+  }
+
+  .media-ph__corner--tl {
+    top: var(--sp-3);
+    left: var(--sp-3);
+    border-width: 2px 0 0 2px;
+  }
+
+  .media-ph__corner--br {
+    right: var(--sp-3);
+    bottom: var(--sp-3);
+    border-width: 0 2px 2px 0;
+  }
+
+  .media-ph__tag {
+    position: absolute;
+    top: var(--sp-3);
+    right: var(--sp-3);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--r-xs);
+    background: var(--c-surface-3);
+    color: var(--c-text);
+    font-size: var(--fs-xs);
+  }
+</style>

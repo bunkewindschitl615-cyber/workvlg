@@ -1,0 +1,141 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import Section from '@/components/ui/Section.astro';
+import { LEAD_HREF, leadHref } from '@/config/navigation';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  services: CollectionEntry<'services'>[];
+}
+
+const { services } = Astro.props;
+const PER_DIRECTION = 2;
+const tasks = services.flatMap((service) =>
+  service.data.popular.slice(0, PER_DIRECTION).map((task) => ({ ...task, direction: service.data.title, href: leadHref(service.id), confirmed: service.data.ownerConfirmed })),
+);
+const hasDrafts = tasks.some((task) => !task.confirmed);
+---
+
+{
+  tasks.length > 0 && (
+    <Section
+      tone="elevated"
+      eyebrow="02 / Популярные услуги"
+      title="Например, с такими задачами"
+      lead="Нажмите на задачу, чтобы сразу перейти к заявке. Не нашли свою — опишите её своими словами."
+    >
+      <ul class="tasks">
+        {tasks.map((task) => (
+          <li>
+            <a href={task.href} class="task">
+              <span class="task__icon">
+                <Icon name={task.icon} size={22} />
+              </span>
+              <span class="task__text">
+                <span class="task__title">{task.title}</span>
+                <span class="task__direction">{task.direction}</span>
+              </span>
+              <Icon name="arrow-right" size={20} class="task__arrow" />
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="tasks__footer">
+        <Button href={LEAD_HREF} variant="secondary" icon="message">
+          Описать свою задачу
+        </Button>
+        {hasDrafts && <PlaceholderNotice kind="draft" subject="перечень задач" />}
+      </div>
+    </Section>
+  )
+}
+
+<style>
+  .tasks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .task {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    height: 100%;
+    min-height: 4.5rem;
+    padding: var(--sp-4);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    color: var(--c-text);
+    text-decoration: none;
+    transition:
+      border-color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
+  }
+
+  .task:hover {
+    border-color: var(--c-accent-line);
+    background: var(--c-surface-2);
+    color: var(--c-text);
+  }
+
+  @media (max-width: 479.98px) {
+    .task {
+      min-height: 0;
+      padding: var(--sp-3) var(--sp-4);
+    }
+  }
+
+  .task__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--r-sm);
+    background: var(--c-accent-soft);
+    color: var(--c-accent);
+  }
+
+  .task__text {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+  }
+
+  .task__title {
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
+  }
+
+  .task__direction {
+    color: var(--c-text-subtle);
+    font-size: var(--fs-xs);
+  }
+
+  .task :global(.task__arrow) {
+    color: var(--c-text-subtle);
+    transition:
+      transform var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+
+  .task:hover :global(.task__arrow) {
+    color: var(--c-accent);
+    transform: translateX(3px);
+  }
+
+  .tasks__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-4);
+    margin-top: var(--sp-8);
+  }
+</style>

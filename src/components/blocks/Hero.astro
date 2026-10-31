@@ -1,0 +1,230 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import MediaPlaceholder from '@/components/ui/MediaPlaceholder.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import { getChannel } from '@/config/contacts';
+import { LEAD_HREF } from '@/config/navigation';
+import { hero } from '@/data/home';
+
+const phone = getChannel('phone');
+---
+
+<section class="hero tech-grid" aria-labelledby="hero-title">
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <p class="hero__eyebrow mono">{hero.eyebrow}</p>
+      <h1 id="hero-title">{hero.title}</h1>
+      <p class="hero__lead lead">{hero.lead}</p>
+
+      <div class="hero__actions">
+        <Button href={LEAD_HREF} size="lg" iconEnd="arrow-right">Оставить заявку</Button>
+        <Button href="#uslugi" size="lg" variant="secondary">Наши услуги</Button>
+      </div>
+      {
+        phone && (
+          <p class="hero__call">
+            или позвоните: <a href={phone.href}>{phone.display}</a>
+          </p>
+        )
+      }
+
+      <ul class="hero__highlights">
+        {
+          hero.highlights.map((item) => (
+            <li>
+              <Icon name={item.icon} size={20} />
+              {item.label}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="hero__media">
+      <MediaPlaceholder label="Фото реального объекта WORKVLG" ratio="4 / 5" icon="building" />
+      <ul class="hero__facts">
+        {
+          hero.facts.map((fact) => (
+            <li class="hero__fact">
+              <span class="hero__fact-value">{fact.value}</span>
+              <span class="hero__fact-label">{fact.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <PlaceholderNotice subject="блок фотографии" class="hero__notice" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: var(--sp-12) var(--sp-16);
+    border-bottom: 1px solid var(--c-border);
+    overflow: hidden;
+  }
+
+  /* Soft accent glow behind the content */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: -30% auto auto -20%;
+    width: 60rem;
+    height: 40rem;
+    background: radial-gradient(closest-side, rgb(255 196 0 / 0.08), transparent);
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    position: relative;
+    display: grid;
+    gap: var(--sp-12);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      padding-block: var(--sp-20);
+    }
+
+    .hero__inner {
+      grid-template-columns: 1.25fr 1fr;
+      gap: var(--sp-16);
+    }
+  }
+
+  .hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-5);
+    padding: var(--sp-1) var(--sp-3);
+    border: 1px solid var(--c-accent-line);
+    border-radius: var(--r-pill);
+    background: var(--c-accent-soft);
+    color: var(--c-accent);
+  }
+
+  h1 {
+    margin-bottom: var(--sp-5);
+    max-width: 18ch;
+  }
+
+  .hero__lead {
+    margin-bottom: var(--sp-8);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+
+  @media (max-width: 479.98px) {
+    .hero__actions :global(.btn) {
+      flex: 1 1 100%;
+    }
+  }
+
+  .hero__call {
+    margin: var(--sp-4) 0 0;
+    color: var(--c-text-muted);
+  }
+
+  .hero__call a {
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+  }
+
+  .hero__highlights {
+    display: grid;
+    gap: var(--sp-3);
+    margin: var(--sp-10) 0 0;
+    padding: var(--sp-6) 0 0;
+    border-top: 1px solid var(--c-border);
+    list-style: none;
+  }
+
+  @media (min-width: 640px) {
+    .hero__highlights {
+      grid-template-columns: repeat(3, auto);
+      justify-content: start;
+      gap: var(--sp-6);
+    }
+  }
+
+  .hero__highlights li {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+  }
+
+  .hero__highlights :global(.icon) {
+    color: var(--c-accent);
+  }
+
+  .hero__media {
+    position: relative;
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  @media (max-width: 1023.98px) {
+    .hero__media :global(.media-ph) {
+      aspect-ratio: 16 / 10 !important;
+    }
+  }
+
+  .hero__facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 1024px) {
+    .hero__facts {
+      position: absolute;
+      left: calc(-1 * var(--sp-8));
+      bottom: var(--sp-16);
+      grid-template-columns: 1fr;
+      width: 15rem;
+    }
+  }
+
+  .hero__fact {
+    display: grid;
+    gap: var(--sp-1);
+    padding: var(--sp-4) var(--sp-5);
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--r-md);
+    background: rgb(24 27 31 / 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-raise);
+  }
+
+  .hero__fact-value {
+    color: var(--c-accent);
+    font-size: var(--fs-3xl);
+    font-weight: var(--fw-black);
+    line-height: 1;
+  }
+
+  .hero__fact-label {
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-snug);
+  }
+
+  .hero :global(.hero__notice) {
+    justify-self: start;
+  }
+</style>

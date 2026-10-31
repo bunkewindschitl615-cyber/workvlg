@@ -1,0 +1,40 @@
+---
+import Card from '@/components/ui/Card.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import Section from '@/components/ui/Section.astro';
+import { advantages } from '@/data/home';
+---
+
+<Section
+  eyebrow="03 / Почему мы"
+  title="Почему выбирают нас"
+  lead="Главное, что мы даём клиенту, — возможность не искать и не координировать разных мастеров самостоятельно."
+>
+  <ul class="advantages">
+    {
+      advantages.map((item) => (
+        <li>
+          <Card icon={item.icon} title={item.title}>
+            <p>{item.text}</p>
+          </Card>
+        </li>
+      ))
+    }
+  </ul>
+  <PlaceholderNotice kind="draft" subject="текст преимуществ" class="advantages__notice" />
+</Section>
+
+<style>
+  .advantages {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--sp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .advantages :global(.advantages__notice) {
+    margin-top: var(--sp-6);
+  }
+</style>

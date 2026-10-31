@@ -11,10 +11,12 @@ interface Props {
   href?: string;
   /** Short technical label shown above the title, e.g. "01". */
   index?: string;
+  /** Text of the visual call-to-action at the bottom of a linked card. */
+  moreLabel?: string;
   class?: string;
 }
 
-const { title, as: Heading = 'h3', icon, href, index, class: className } = Astro.props;
+const { title, as: Heading = 'h3', icon, href, index, moreLabel = 'Подробнее', class: className } = Astro.props;
 ---
 
 <article class:list={['card', href && 'card--link', className]}>
@@ -47,7 +49,7 @@ const { title, as: Heading = 'h3', icon, href, index, class: className } = Astro
   {
     href && (
       <span class="card__more" aria-hidden="true">
-        Подробнее <Icon name="arrow-right" size={18} />
+        {moreLabel} <Icon name="arrow-right" size={18} />
       </span>
     )
   }

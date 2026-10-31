@@ -4,15 +4,19 @@ import Icon from './Icon.astro';
 interface Props {
   /** What exactly is a placeholder, e.g. "фотографии", "описание проекта". */
   subject?: string;
+  /** demo — material will be replaced; draft — real wording awaiting owner approval. */
+  kind?: 'demo' | 'draft';
   class?: string;
 }
 
-const { subject = 'материал', class: className } = Astro.props;
+const { subject = 'материал', kind = 'demo', class: className } = Astro.props;
+const message =
+  kind === 'draft' ? `Черновик: ${subject} ожидает подтверждения владельца.` : `Демонстрационный ${subject}: будет заменён реальными данными.`;
 ---
 
 <p class:list={['placeholder', className]} role="note">
   <Icon name="info" size={18} />
-  <span>Демонстрационный {subject}: будет заменён реальными данными.</span>
+  <span>{message}</span>
 </p>
 
 <style>

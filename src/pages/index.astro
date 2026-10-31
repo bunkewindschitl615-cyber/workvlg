@@ -1,13 +1,29 @@
 ---
-// Temporary page until the real home page is built in stage 3.
-import Section from '@/components/ui/Section.astro';
-import Button from '@/components/ui/Button.astro';
+import Advantages from '@/components/blocks/Advantages.astro';
+import Capabilities from '@/components/blocks/Capabilities.astro';
+import ContactsSection from '@/components/blocks/ContactsSection.astro';
+import Directions from '@/components/blocks/Directions.astro';
+import Faq from '@/components/blocks/Faq.astro';
+import Hero from '@/components/blocks/Hero.astro';
+import LeadSection from '@/components/blocks/LeadSection.astro';
+import PopularTasks from '@/components/blocks/PopularTasks.astro';
+import Process from '@/components/blocks/Process.astro';
+import ProjectsPreview from '@/components/blocks/ProjectsPreview.astro';
 import PageLayout from '@/layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <PageLayout>
-  <Section tone="grid" as="h1" eyebrow="Сайт в разработке" title="WORKVLG: строительство и ремонт в Волгограде и области">
-    <p class="lead">Главная страница появится на следующем этапе. Сейчас можно посмотреть дизайн-систему сайта.</p>
-    <Button href="/styleguide/" iconEnd="arrow-right">Открыть дизайн-систему</Button>
-  </Section>
+  <Hero />
+  <Directions services={services} />
+  <PopularTasks services={services} />
+  <Advantages />
+  <Capabilities />
+  <ProjectsPreview />
+  <Process />
+  <Faq />
+  <LeadSection />
+  <ContactsSection />
 </PageLayout>

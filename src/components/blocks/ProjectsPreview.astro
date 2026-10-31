@@ -1,0 +1,54 @@
+---
+import Button from '@/components/ui/Button.astro';
+import MediaPlaceholder from '@/components/ui/MediaPlaceholder.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import Section from '@/components/ui/Section.astro';
+import { LEAD_HREF } from '@/config/navigation';
+
+// Shows an honest empty state until real projects are added (stage 5).
+const slots = [
+  { label: 'Объект: фото до начала работ', tag: 'ДО' },
+  { label: 'Объект: фото после завершения', tag: 'ПОСЛЕ' },
+  { label: 'Объект: процесс работ', tag: 'ПРОЦЕСС' },
+];
+---
+
+<Section
+  eyebrow="05 / Наши работы"
+  title="Выполненные проекты"
+  lead="Здесь будут реальные объекты: фотографии до и после, описание задачи и выполненных работ."
+>
+  <ul class="projects">
+    {
+      slots.map((slot) => (
+        <li>
+          <MediaPlaceholder label={slot.label} tag={slot.tag} ratio="4 / 3" />
+        </li>
+      ))
+    }
+  </ul>
+  <div class="projects__footer">
+    <PlaceholderNotice subject="раздел портфолио" />
+    <Button href={LEAD_HREF} variant="secondary" iconEnd="arrow-right">Обсудить свой объект</Button>
+  </div>
+</Section>
+
+<style>
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--sp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .projects__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    margin-top: var(--sp-6);
+  }
+</style>

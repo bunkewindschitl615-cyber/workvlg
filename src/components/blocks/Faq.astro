@@ -1,0 +1,92 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import Section from '@/components/ui/Section.astro';
+import { faq } from '@/data/home';
+---
+
+<Section eyebrow="07 / Вопросы" title="Часто задаваемые вопросы">
+  <div class="faq">
+    {
+      faq.map((item, i) => (
+        <details class="faq__item" open={i === 0}>
+          <summary>
+            <span>{item.question}</span>
+            <span class="faq__toggle" aria-hidden="true">
+              <Icon name="plus" size={20} />
+            </span>
+          </summary>
+          <p>{item.answer}</p>
+        </details>
+      ))
+    }
+  </div>
+  <PlaceholderNotice kind="draft" subject="ответы на вопросы" class="faq__notice" />
+</Section>
+
+<style>
+  .faq {
+    display: grid;
+    gap: var(--sp-3);
+    max-width: 52rem;
+  }
+
+  .faq__item {
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  .faq__item[open] {
+    border-color: var(--c-accent-line);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    min-height: 3.75rem;
+    padding: var(--sp-4) var(--sp-5);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
+    list-style: none;
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:hover {
+    color: var(--c-accent);
+  }
+
+  .faq__toggle {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-3);
+    color: var(--c-accent);
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .faq__item[open] .faq__toggle {
+    transform: rotate(45deg);
+  }
+
+  .faq__item p {
+    margin: 0;
+    padding: 0 var(--sp-5) var(--sp-5);
+    color: var(--c-text-muted);
+  }
+
+  .faq + :global(.faq__notice) {
+    margin-top: var(--sp-6);
+  }
+</style>

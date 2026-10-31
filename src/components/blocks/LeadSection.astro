@@ -1,0 +1,208 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import Section from '@/components/ui/Section.astro';
+import { contactChannels } from '@/config/contacts';
+import { features } from '@/config/features';
+
+const directChannels = contactChannels.filter((channel) => channel.id !== 'instagram');
+
+const afterRequest = [
+  { icon: 'phone', text: 'Свяжемся с вами и уточним детали задачи' },
+  { icon: 'map-pin', text: 'При необходимости договоримся об осмотре объекта' },
+  { icon: 'calculator', text: 'Определим объём работ и назовём стоимость' },
+] as const;
+
+const prepare = ['Коротко опишите задачу', 'Приложите фото, если есть', 'Укажите населённый пункт'];
+---
+
+<Section id="zayavka" tone="elevated" eyebrow="08 / Заявка" title="Оставьте заявку" lead="Опишите задачу — даже если не знаете, как она называется. Мы разберёмся и предложим решение.">
+  <div class="lead-grid">
+    <div class="lead-info">
+      <h3>Что будет после заявки</h3>
+      <ol class="lead-info__steps">
+        {
+          afterRequest.map((item, i) => (
+            <li>
+              <span class="lead-info__num mono">{i + 1}</span>
+              <Icon name={item.icon} size={20} />
+              <span>{item.text}</span>
+            </li>
+          ))
+        }
+      </ol>
+      <h3>Чтобы ускорить расчёт</h3>
+      <ul class="lead-info__prepare">
+        {
+          prepare.map((item) => (
+            <li>
+              <Icon name="check" size={18} />
+              {item}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="lead-panel">
+      {
+        features.leadForm ? (
+          <slot />
+        ) : (
+          <>
+            <div class="lead-panel__status">
+              <Icon name="info" size={22} />
+              <div>
+                <p class="lead-panel__title">Онлайн-форма скоро заработает</p>
+                <p class="lead-panel__text">
+                  Приём заявок через сайт будет включён после настройки сервера. Сейчас быстрее всего связаться с нами напрямую.
+                </p>
+              </div>
+            </div>
+            {directChannels.length > 0 ? (
+              <div>
+                <p class="lead-panel__caption">Позвоните или напишите:</p>
+                <ul class="lead-panel__channels">
+                  {directChannels.map((channel, i) => (
+                    <li>
+                      <Button href={channel.href} external={channel.external} icon={channel.icon} variant={i === 0 ? 'primary' : 'secondary'} size="lg" block>
+                        {channel.id === 'phone' ? channel.display : channel.label}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <PlaceholderNotice subject="блок контактов" />
+            )}
+          </>
+        )
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  .lead-grid {
+    display: grid;
+    gap: var(--sp-10);
+  }
+
+  @media (min-width: 1024px) {
+    .lead-grid {
+      grid-template-columns: 1fr 1.1fr;
+      gap: var(--sp-16);
+      align-items: start;
+    }
+  }
+
+  .lead-info h3 {
+    margin-bottom: var(--sp-5);
+    font-size: var(--fs-lg);
+  }
+
+  .lead-info__steps,
+  .lead-info__prepare {
+    display: grid;
+    gap: var(--sp-4);
+    margin: 0 0 var(--sp-10);
+    padding: 0;
+    list-style: none;
+  }
+
+  .lead-info__steps li {
+    display: grid;
+    grid-template-columns: 2rem 1.5rem 1fr;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .lead-info__steps :global(.icon) {
+    color: var(--c-accent);
+  }
+
+  .lead-info__num {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--c-accent-line);
+    border-radius: var(--r-pill);
+    color: var(--c-accent);
+  }
+
+  .lead-info__prepare {
+    margin-bottom: 0;
+    gap: var(--sp-2);
+  }
+
+  .lead-info__prepare li {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    color: var(--c-text-muted);
+  }
+
+  .lead-info__prepare :global(.icon) {
+    color: var(--c-success);
+  }
+
+  .lead-panel {
+    display: grid;
+    gap: var(--sp-6);
+    padding: var(--sp-8);
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--r-lg);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-raise);
+  }
+
+  @media (max-width: 479.98px) {
+    .lead-panel {
+      padding: var(--sp-4);
+    }
+  }
+
+  .lead-panel__status {
+    display: flex;
+    gap: var(--sp-3);
+    padding: var(--sp-4);
+    border-radius: var(--r-md);
+    background: var(--c-accent-soft);
+  }
+
+  .lead-panel__status > :global(.icon) {
+    margin-top: 0.1rem;
+    color: var(--c-accent);
+  }
+
+  .lead-panel__title {
+    margin: 0 0 var(--sp-1);
+    font-weight: var(--fw-bold);
+  }
+
+  .lead-panel__text {
+    margin: 0;
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+  }
+
+  .lead-panel__caption {
+    margin: 0 0 var(--sp-3);
+    color: var(--c-text-muted);
+    font-weight: var(--fw-semibold);
+  }
+
+  .lead-panel__channels {
+    display: grid;
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lead-panel__channels :global(.btn) {
+    white-space: normal;
+  }
+</style>

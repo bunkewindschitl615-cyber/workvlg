@@ -1,0 +1,94 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Section from '@/components/ui/Section.astro';
+import { LEAD_HREF } from '@/config/navigation';
+import { processSteps } from '@/data/process';
+---
+
+<Section
+  tone="grid"
+  eyebrow="06 / Процесс"
+  title="Как мы работаем"
+  lead={`${processSteps.length} понятных шагов от заявки до результата. На каждом этапе вы знаете, что происходит.`}
+>
+  <ol class="steps">
+    {
+      processSteps.map((step, i) => (
+        <li class="step">
+          <div class="step__head">
+            <span class="step__num mono">{String(i + 1).padStart(2, '0')}</span>
+            <span class="step__icon">
+              <Icon name={step.icon} size={22} />
+            </span>
+          </div>
+          <h3 class="step__title">{step.title}</h3>
+          <p class="step__text">{step.text}</p>
+        </li>
+      ))
+    }
+    <li class="step step--cta">
+      <p class="step__title">Начнём с первого шага?</p>
+      <Button href={LEAD_HREF} iconEnd="arrow-right" block>Оставить заявку</Button>
+    </li>
+  </ol>
+</Section>
+
+<style>
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--sp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding: var(--sp-6);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    background: rgb(24 27 31 / 0.88);
+  }
+
+  .step__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--sp-3);
+  }
+
+  .step__num {
+    color: var(--c-accent);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+  }
+
+  .step__icon {
+    color: var(--c-text-subtle);
+  }
+
+  .step__title {
+    margin: 0;
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-snug);
+  }
+
+  .step__text {
+    margin: 0;
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+  }
+
+  .step--cta {
+    justify-content: space-between;
+    gap: var(--sp-6);
+    border-color: var(--c-accent-line);
+    background: linear-gradient(140deg, var(--c-accent-soft), transparent 70%), var(--c-surface);
+  }
+</style>
