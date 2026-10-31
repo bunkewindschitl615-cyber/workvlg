@@ -1,0 +1,27 @@
+{
+  "name": "workvlg",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Сайт строительной и ремонтной компании WORKVLG (Волгоград и Волгоградская область)",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "start": "node ./dist/server/entry.mjs",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.9",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.4.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "typescript": "^6.0.3"
+  }
+}

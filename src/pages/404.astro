@@ -1,0 +1,27 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Страница не найдена" description="Запрошенная страница не существует или была перемещена." noindex>
+  <main class="not-found">
+    <p class="code" aria-hidden="true">404</p>
+    <h1>Страница не найдена</h1>
+    <p>Возможно, адрес набран с ошибкой или страница была перемещена.</p>
+    <a href="/">Вернуться на главную</a>
+  </main>
+</BaseLayout>
+
+<style>
+  .not-found {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 6rem 1.25rem;
+  }
+
+  .code {
+    margin: 0;
+    font-size: 4rem;
+    font-weight: 800;
+    color: #ffc400;
+  }
+</style>

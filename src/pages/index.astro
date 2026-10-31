@@ -1,0 +1,39 @@
+---
+// Temporary stage-1 page to verify the skeleton; the real home page is built in stage 3.
+import { contactChannels } from '@/config/contacts';
+import { site } from '@/config/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout>
+  <main class="stub">
+    <h1>{site.name}: строительство и ремонт в Волгограде и области</h1>
+    <p>Сайт находится в разработке.</p>
+
+    {
+      contactChannels.length > 0 ? (
+        <ul>
+          {contactChannels.map((channel) => (
+            <li>
+              {channel.label}:{' '}
+              <a href={channel.href} {...(channel.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                {channel.display}
+              </a>
+              {channel.legalNote && <small> {channel.legalNote}</small>}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Контакты пока не заданы в конфигурации.</p>
+      )
+    }
+  </main>
+</BaseLayout>
+
+<style>
+  .stub {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 4rem 1.25rem;
+  }
+</style>
