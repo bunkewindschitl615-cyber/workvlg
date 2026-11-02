@@ -1,5 +1,6 @@
 ---
 import Icon from '@/components/ui/Icon.astro';
+import { url } from '@/lib/url';
 
 export interface Crumb {
   label: string;
@@ -11,7 +12,7 @@ interface Props {
   items: Crumb[];
 }
 
-const items: Crumb[] = [{ label: 'Главная', href: '/' }, ...Astro.props.items];
+const items: Crumb[] = [{ label: 'Главная', href: url('/') }, ...Astro.props.items];
 ---
 
 <nav class="breadcrumbs" aria-label="Навигационная цепочка">

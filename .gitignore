@@ -11,8 +11,8 @@ dist/
 !.env.example
 
 # Runtime data: leads database and uploaded files contain personal data
-data/
-uploads/
+/data/
+/uploads/
 *.sqlite
 *.sqlite-journal
 *.db

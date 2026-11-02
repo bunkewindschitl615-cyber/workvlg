@@ -1,11 +1,13 @@
 ---
+import { url } from '@/lib/url';
+
 // Temporary text wordmark until the owner provides the real logo.
 interface Props {
   href?: string;
   class?: string;
 }
 
-const { href = '/', class: className } = Astro.props;
+const { href = url('/'), class: className } = Astro.props;
 ---
 
 <a href={href} class:list={['logo', className]} aria-label="WORKVLG — на главную">

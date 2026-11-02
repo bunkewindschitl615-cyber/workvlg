@@ -1,62 +1,165 @@
 ---
+import ServiceGroups from '@/components/blocks/ServiceGroups.astro';
 import Button from '@/components/ui/Button.astro';
-import Card from '@/components/ui/Card.astro';
-import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
-import Section from '@/components/ui/Section.astro';
-import { serviceHref, type Service } from '@/lib/services';
+import Icon from '@/components/ui/Icon.astro';
+import { leadHref } from '@/config/navigation';
+import { serviceHref, servicePath, type Service } from '@/lib/services';
+import { url } from '@/lib/url';
 
 interface Props {
   services: Service[];
 }
 
 const { services } = Astro.props;
-const hasDrafts = services.some((service) => !service.data.ownerConfirmed);
 ---
 
-<Section
-  id="uslugi"
-  eyebrow="01 / Направления"
-  title="Чем мы занимаемся"
-  lead="От мелкого бытового ремонта до комплексных строительных задач. Выберите направление или просто опишите задачу — мы подскажем, как её решить."
->
-  <ul class="directions">
-    {
-      services.map((service, i) => (
-        <li>
-          <Card
-            icon={service.data.icon}
-            index={String(i + 1).padStart(2, '0')}
-            title={service.data.title}
-            href={serviceHref(service)}
-            moreLabel={service.data.hasPage ? 'Подробнее' : 'Обсудить задачу'}
-          >
-            <p>{service.data.summary}</p>
-          </Card>
-        </li>
-      ))
-    }
-  </ul>
-  <div class="directions__footer">
-    <Button href="/uslugi/" variant="secondary" iconEnd="arrow-right">Все услуги</Button>
-    {hasDrafts && <PlaceholderNotice kind="draft" subject="перечень и описания направлений" />}
+<section id="uslugi" class="section" aria-labelledby="uslugi-title">
+  <div class="container">
+    <header class="section__head">
+      <p class="section__eyebrow mono">01 / Направления</p>
+      <h2 id="uslugi-title" class="section__title">Чем мы занимаемся</h2>
+      <p class="section__lead lead">
+        Четыре направления: от мастера на час до строительства под ключ. Перечень работ внутри каждого направления дополняется.
+      </p>
+    </header>
+
+    <ol class="directions">
+      {
+        services.map((service, i) => (
+          <li class="direction">
+            <div class="direction__head">
+              <span class="direction__icon">
+                <Icon name={service.data.icon} size={26} />
+              </span>
+              <span class="direction__index mono">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <h3 class="direction__title">
+              <a href={serviceHref(service)}>{service.data.title}</a>
+            </h3>
+            <p class="direction__summary">{service.data.summary}</p>
+            {service.data.groups.length > 0 && <ServiceGroups groups={service.data.groups} as="h4" />}
+            <div class="direction__actions">
+              <Button href={leadHref(service.id)} icon="message">
+                Заказать
+              </Button>
+              {service.data.hasPage && (
+                <Button href={servicePath(service)} variant="ghost" iconEnd="arrow-right">
+                  Подробнее
+                </Button>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="directions__footer">
+      <Button href={url('/uslugi/')} variant="secondary" iconEnd="arrow-right">Все услуги</Button>
+    </div>
   </div>
-</Section>
+</section>
 
 <style>
+  .section {
+    padding-block: var(--section-y);
+  }
+
+  .section__head {
+    margin-bottom: var(--sp-10);
+    max-width: 48rem;
+  }
+
+  .section__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin: 0 0 var(--sp-4);
+    color: var(--c-accent);
+    text-transform: uppercase;
+  }
+
+  .section__eyebrow::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--c-accent);
+  }
+
+  .section__title {
+    margin-bottom: var(--sp-4);
+  }
+
+  .section__lead {
+    margin-bottom: 0;
+  }
+
   .directions {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 34rem), 1fr));
     gap: var(--sp-4);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .directions__footer {
+  .direction {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    padding: var(--sp-6);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    background: var(--c-surface);
+  }
+
+  .direction__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .direction__icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--r-md);
+    background: var(--c-accent-soft);
+    color: var(--c-accent);
+  }
+
+  .direction__index {
+    color: var(--c-text-subtle);
+  }
+
+  .direction__title {
+    margin: 0;
+    font-size: var(--fs-xl);
+  }
+
+  .direction__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .direction__title a:hover {
+    color: var(--c-accent);
+  }
+
+  .direction__summary {
+    margin: 0;
+    color: var(--c-text-muted);
+  }
+
+  .direction__actions {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: var(--sp-4);
+    gap: var(--sp-2);
+    margin-top: auto;
+    padding-top: var(--sp-2);
+  }
+
+  .directions__footer {
     margin-top: var(--sp-8);
   }
 </style>

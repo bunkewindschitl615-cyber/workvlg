@@ -8,12 +8,14 @@ import sitemap from '@astrojs/sitemap';
 if (existsSync('.env')) process.loadEnvFile('.env');
 
 const SITE_URL = process.env.SITE_URL || 'http://localhost:4321';
+const BASE_PATH = process.env.BASE_PATH && process.env.BASE_PATH !== '/' ? `/${process.env.BASE_PATH.replace(/^\/|\/$/g, '')}` : '/';
 
-/** Service pages that must never appear in the sitemap. */
-const SITEMAP_EXCLUDE = ['/404/', '/spasibo/', '/styleguide/'];
+/** Pages that must never appear in the sitemap. */
+const SITEMAP_EXCLUDE = ['/404/', '/spasibo/', '/styleguide/', '/politika-konfidencialnosti/', '/soglasie-na-obrabotku-pd/'];
 
 export default defineConfig({
   site: SITE_URL,
+  base: BASE_PATH,
   trailingSlash: 'always',
   build: { format: 'directory' },
 
@@ -25,7 +27,7 @@ export default defineConfig({
 
   integrations: [
     sitemap({
-      filter: (page) => !SITEMAP_EXCLUDE.some((path) => new URL(page).pathname === path),
+      filter: (page) => !SITEMAP_EXCLUDE.some((path) => new URL(page).pathname.endsWith(path)),
     }),
   ],
 
@@ -47,9 +49,14 @@ export default defineConfig({
     schema: {
       PUBLIC_INDEXING: envField.boolean({ context: 'server', access: 'public', default: false }),
 
-      PUBLIC_CONTACT_PHONE: envField.string({ context: 'server', access: 'public', optional: true }),
+      PUBLIC_CONTACT_PHONE: envField.string({ context: 'server', access: 'public', default: '+7 991 363-41-42' }),
       PUBLIC_CONTACT_EMAIL: envField.string({ context: 'server', access: 'public', optional: true }),
-      PUBLIC_TELEGRAM_URL: envField.string({ context: 'server', access: 'public', optional: true, url: true }),
+      PUBLIC_TELEGRAM_URL: envField.string({
+        context: 'server',
+        access: 'public',
+        url: true,
+        default: 'https://t.me/vlgwork',
+      }),
       PUBLIC_MAX_URL: envField.string({ context: 'server', access: 'public', optional: true, url: true }),
       PUBLIC_VK_URL: envField.string({ context: 'server', access: 'public', optional: true, url: true }),
       PUBLIC_INSTAGRAM_URL: envField.string({ context: 'server', access: 'public', optional: true, url: true }),

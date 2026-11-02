@@ -32,6 +32,8 @@ const services = defineCollection({
         .optional(),
       audience: z.array(z.string()).default([]),
       tasks: z.array(z.string()).default([]),
+      /** Named groups of works. The list is extended by editing the service file. */
+      groups: z.array(z.object({ title: z.string(), items: z.array(z.string()).min(1) })).default([]),
       benefits: z.array(z.object({ title: z.string(), text: z.string(), icon: iconName })).default([]),
       related: z.array(reference('services')).default([]),
     })
@@ -40,8 +42,11 @@ const services = defineCollection({
       for (const field of ['seo', 'h1'] as const) {
         if (!data[field]) ctx.addIssue({ code: 'custom', path: [field], message: `Для страницы услуги нужно поле ${field}` });
       }
-      for (const field of ['audience', 'tasks', 'benefits'] as const) {
+      for (const field of ['audience', 'benefits'] as const) {
         if (data[field].length === 0) ctx.addIssue({ code: 'custom', path: [field], message: `Для страницы услуги нужен список ${field}` });
+      }
+      if (data.tasks.length === 0 && data.groups.length === 0) {
+        ctx.addIssue({ code: 'custom', path: ['groups'], message: 'Для страницы услуги нужен список groups или tasks' });
       }
     }),
 });

@@ -1,6 +1,7 @@
 ---
 import PageHero from '@/components/blocks/PageHero.astro';
 import Process from '@/components/blocks/Process.astro';
+import ServiceGroups from '@/components/blocks/ServiceGroups.astro';
 import Button from '@/components/ui/Button.astro';
 import Card from '@/components/ui/Card.astro';
 import Icon from '@/components/ui/Icon.astro';
@@ -11,6 +12,7 @@ import { getChannel } from '@/config/contacts';
 import { leadHref } from '@/config/navigation';
 import PageLayout from '@/layouts/PageLayout.astro';
 import { getServices, serviceHref, type Service } from '@/lib/services';
+import { url } from '@/lib/url';
 import type { GetStaticPaths } from 'astro';
 import { getEntries, render } from 'astro:content';
 
@@ -34,7 +36,7 @@ if (!seo || !h1) throw new Error(`Услуга ${service.id}: для стран�
 ---
 
 <PageLayout title={seo.title} description={seo.description}>
-  <PageHero breadcrumbs={[{ label: 'Услуги', href: '/uslugi/' }, { label: data.title }]} eyebrow="Услуга" title={h1} lead={data.summary}>
+  <PageHero breadcrumbs={[{ label: 'Услуги', href: url('/uslugi/') }, { label: data.title }]} eyebrow="Услуга" title={h1} lead={data.summary}>
     <Fragment slot="actions">
       <Button href={lead} size="lg" iconEnd="arrow-right">Оставить заявку</Button>
       {
@@ -77,18 +79,22 @@ if (!seo || !h1) throw new Error(`Услуга ${service.id}: для стран�
   </Section>
 
   <Section tone="elevated" eyebrow="02 / Задачи" title="Какие задачи решаем">
-    <ul class="tasks">
-      {
-        data.tasks.map((task) => (
-          <li>
-            <span class="tasks__check">
-              <Icon name="check" size={18} />
-            </span>
-            {task}
-          </li>
-        ))
-      }
-    </ul>
+    {
+      data.groups.length > 0 ? (
+        <ServiceGroups groups={data.groups} layout="grid" />
+      ) : (
+        <ul class="tasks">
+          {data.tasks.map((task) => (
+            <li>
+              <span class="tasks__check">
+                <Icon name="check" size={18} />
+              </span>
+              {task}
+            </li>
+          ))}
+        </ul>
+      )
+    }
     <div class="tasks__more">
       <p>Не нашли свою задачу в списке? Опишите её своими словами — мы скажем, сможем ли помочь.</p>
       <Button href={lead} variant="secondary" icon="message">Описать задачу</Button>

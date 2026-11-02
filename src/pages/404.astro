@@ -1,6 +1,7 @@
 ---
 import Button from '@/components/ui/Button.astro';
 import { LEAD_HREF } from '@/config/navigation';
+import { url } from '@/lib/url';
 import PageLayout from '@/layouts/PageLayout.astro';
 ---
 
@@ -11,7 +12,7 @@ import PageLayout from '@/layouts/PageLayout.astro';
       <h1>Страница не найдена</h1>
       <p class="lead">Возможно, адрес набран с ошибкой или страница была перемещена.</p>
       <div class="not-found__actions">
-        <Button href="/" icon="home">На главную</Button>
+        <Button href={url('/')} icon="home">На главную</Button>
         <Button href={LEAD_HREF} variant="secondary" icon="message">Оставить заявку</Button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { leadHref } from '@/config/navigation';
+import { url } from '@/lib/url';
 
 export type Service = CollectionEntry<'services'>;
 
@@ -8,7 +9,7 @@ export async function getServices(): Promise<Service[]> {
 }
 
 export function servicePath(service: Service): string {
-  return `/uslugi/${service.id}/`;
+  return url(`/uslugi/${service.id}/`);
 }
 
 /** Service page if it exists, otherwise the lead form with this direction preselected. */

@@ -1,0 +1,200 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import MediaPlaceholder from '@/components/ui/MediaPlaceholder.astro';
+import { heroSlides } from '@/data/hero-slides';
+import { url } from '@/lib/url';
+
+const slides = heroSlides.map((slide) => ({ ...slide, href: url(slide.href) }));
+---
+
+<div class="slider" data-slider data-interval="5000">
+  <div class="slider__viewport" aria-roledescription="карусель" aria-label="Направления работ">
+    {
+      slides.map((slide, index) => (
+        <div class="slider__slide" data-slide hidden={index !== 0}>
+          <MediaPlaceholder label={slide.title} ratio="4 / 5" icon={slide.icon} tag={String(index + 1).padStart(2, '0')} />
+          <a class="slider__caption" href={slide.href}>
+            <span>{slide.caption}</span>
+            <Icon name="arrow-right" size={18} />
+          </a>
+        </div>
+      ))
+    }
+  </div>
+  <div class="slider__bar">
+    <button class="slider__nav" type="button" data-prev aria-label="Предыдущий слайд">
+      <Icon name="chevron-right" size={18} />
+    </button>
+    <div class="slider__dots" role="tablist" aria-label="Слайды">
+      {
+        slides.map((slide, index) => (
+          <button class="slider__dot" type="button" role="tab" data-dot={index} aria-selected={index === 0 ? 'true' : 'false'} aria-label={slide.title} />
+        ))
+      }
+    </div>
+    <button class="slider__nav" type="button" data-toggle aria-pressed="true" aria-label="Остановить слайды">
+      <span data-toggle-icon aria-hidden="true">II</span>
+    </button>
+    <button class="slider__nav" type="button" data-next aria-label="Следующий слайд">
+      <Icon name="chevron-right" size={18} />
+    </button>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-slider]');
+  if (root) {
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-dot]')];
+    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]');
+    const toggleIcon = root.querySelector<HTMLElement>('[data-toggle-icon]');
+    const interval = Number(root.dataset.interval) || 5000;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let index = 0;
+    let timer = 0;
+    let playing = !reduce;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.hidden = i !== index;
+      });
+      dots.forEach((dot, i) => dot.setAttribute('aria-selected', String(i === index)));
+    };
+
+    const stop = () => {
+      window.clearInterval(timer);
+      timer = 0;
+      playing = false;
+      toggle?.setAttribute('aria-pressed', 'false');
+      toggle?.setAttribute('aria-label', 'Запустить слайды');
+      if (toggleIcon) toggleIcon.textContent = '▶';
+    };
+
+    const play = () => {
+      if (reduce || slides.length < 2) return;
+      window.clearInterval(timer);
+      playing = true;
+      toggle?.setAttribute('aria-pressed', 'true');
+      toggle?.setAttribute('aria-label', 'Остановить слайды');
+      if (toggleIcon) toggleIcon.textContent = 'II';
+      timer = window.setInterval(() => show(index + 1), interval);
+    };
+
+    root.querySelector('[data-prev]')?.addEventListener('click', () => {
+      stop();
+      show(index - 1);
+    });
+    root.querySelector('[data-next]')?.addEventListener('click', () => {
+      stop();
+      show(index + 1);
+    });
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        stop();
+        show(Number(dot.dataset.dot));
+      });
+    });
+    toggle?.addEventListener('click', () => (playing ? stop() : play()));
+    root.addEventListener('mouseenter', () => window.clearInterval(timer));
+    root.addEventListener('mouseleave', () => {
+      if (playing) play();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) window.clearInterval(timer);
+      else if (playing) play();
+    });
+
+    if (playing) play();
+    else if (toggleIcon) toggleIcon.textContent = '▶';
+  }
+</script>
+
+<style>
+  .slider {
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  .slider__viewport {
+    position: relative;
+  }
+
+  .slider__slide {
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  .slider__slide[hidden] {
+    display: none;
+  }
+
+  .slider__caption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    min-height: 2.75rem;
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+  }
+
+  .slider__caption:hover {
+    color: var(--c-accent);
+  }
+
+  .slider__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .slider__dots {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    gap: var(--sp-2);
+  }
+
+  .slider__dot {
+    width: 1.75rem;
+    height: 0.35rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-3);
+    cursor: pointer;
+  }
+
+  .slider__dot[aria-selected='true'] {
+    background: var(--c-accent);
+  }
+
+  .slider__nav {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    color: var(--c-text);
+    cursor: pointer;
+  }
+
+  .slider__nav:hover {
+    border-color: var(--c-accent-line);
+    color: var(--c-accent);
+  }
+
+  [data-prev] :global(.icon) {
+    transform: scaleX(-1);
+  }
+
+  [data-toggle-icon] {
+    font-size: 0.7rem;
+    letter-spacing: -0.08em;
+  }
+</style>

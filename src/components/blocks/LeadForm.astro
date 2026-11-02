@@ -1,0 +1,241 @@
+---
+import Button from '@/components/ui/Button.astro';
+import { getChannel } from '@/config/contacts';
+import { getServices } from '@/lib/services';
+import { url } from '@/lib/url';
+
+const services = await getServices();
+const telegram = getChannel('telegram');
+const phone = getChannel('phone');
+const telegramUser = telegram ? new URL(telegram.href).pathname.replace(/\//g, '') : '';
+---
+
+{
+  telegram ? (
+    <form class="form" data-lead-form data-telegram={telegramUser} novalidate>
+      <p class="form__intro">Заявка откроется в Telegram уже с текстом. Нажмите там «Отправить» — сайт заявку не хранит.</p>
+      <div class="form__honeypot" aria-hidden="true">
+        <label>
+          Компания
+          <input type="text" name="company" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+      <label class="field">
+        <span>Имя</span>
+        <input type="text" name="name" autocomplete="name" maxlength="80" />
+      </label>
+      <label class="field">
+        <span>Телефон <i>обязательно</i></span>
+        <input type="tel" name="phone" autocomplete="tel" inputmode="tel" required placeholder="+7 900 000-00-00" />
+      </label>
+      <label class="field">
+        <span>Населённый пункт</span>
+        <input type="text" name="city" autocomplete="address-level2" maxlength="80" placeholder="Волгоград" />
+      </label>
+      <label class="field">
+        <span>Направление</span>
+        <select name="category">
+          <option value="">Пока не знаю, нужна консультация</option>
+          {services.map((service) => (
+            <option value={service.data.title}>{service.data.title}</option>
+          ))}
+        </select>
+      </label>
+      <label class="field">
+        <span>Задача</span>
+        <textarea name="task" rows="4" maxlength="700" placeholder="Что нужно сделать и где" />
+      </label>
+      <fieldset class="field">
+        <legend>Как удобнее связаться</legend>
+        <label class="choice"><input type="radio" name="contact" value="По телефону" checked /> По телефону</label>
+        <label class="choice"><input type="radio" name="contact" value="В Telegram" /> В Telegram</label>
+      </fieldset>
+      <p class="form__photo">Фотографии прикрепите уже в чате Telegram: через сайт файл не отправляется.</p>
+      <label class="consent">
+        <input type="checkbox" name="consent" required />
+        <span>
+          Согласен на <a href={url('/soglasie-na-obrabotku-pd/')}>обработку персональных данных</a> для ответа на заявку. <a href={url('/politika-konfidencialnosti/')}>Политика</a>
+        </span>
+      </label>
+      <p class="form__error" data-error hidden />
+      <Button type="submit" size="lg" block icon="telegram">Открыть заявку в Telegram</Button>
+      {phone && (
+        <p class="form__alt">
+          или позвоните: <a href={phone.href}>{phone.display}</a>
+        </p>
+      )}
+      <p class="form__done" data-done hidden>
+        Черновик открыт в Telegram. Нажмите там «Отправить». Если окно не появилось, <a data-fallback href={telegram.href}>перейдите в чат</a>.
+      </p>
+    </form>
+  ) : (
+    <p>Ссылка на Telegram не настроена, отправить заявку с сайта пока нельзя.</p>
+  )
+}
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-lead-form]');
+  const params = new URLSearchParams(location.search);
+  const preset = params.get('kategoriya');
+  const select = form?.querySelector<HTMLSelectElement>('select[name="category"]');
+  if (select && preset) {
+    const known: Record<string, string> = {
+      'melkiy-remont': 'Мелкий бытовой ремонт (Мастер на час)',
+      'kosmeticheskiy-remont': 'Средний и косметический ремонт',
+      'kapitalnyy-remont': 'Капитальный ремонт помещений',
+      'pod-klyuch': 'Комплексные строительные задачи под ключ',
+    };
+    const title = known[preset];
+    const match = title ? [...select.options].find((item) => item.value === title) : undefined;
+    if (match) select.value = match.value;
+  }
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const error = form.querySelector<HTMLElement>('[data-error]');
+    const done = form.querySelector<HTMLElement>('[data-done]');
+    const fallback = form.querySelector<HTMLAnchorElement>('[data-fallback]');
+    const data = new FormData(form);
+    const showError = (message: string) => {
+      if (!error) return;
+      error.hidden = false;
+      error.textContent = message;
+    };
+
+    if (String(data.get('company') ?? '').trim()) {
+      form.hidden = true;
+      return;
+    }
+
+    const phone = String(data.get('phone') ?? '').trim();
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length < 10) {
+      showError('Укажите телефон, чтобы мы могли ответить.');
+      form.querySelector<HTMLInputElement>('input[name="phone"]')?.focus();
+      return;
+    }
+    if (!data.get('consent')) {
+      showError('Нужно согласие на обработку персональных данных.');
+      return;
+    }
+
+    const lines = [
+      'Заявка с сайта WORKVLG',
+      data.get('name') ? `Имя: ${String(data.get('name')).trim()}` : '',
+      `Телефон: ${phone}`,
+      data.get('city') ? `Населённый пункт: ${String(data.get('city')).trim()}` : '',
+      `Направление: ${String(data.get('category') || 'нужна консультация')}`,
+      `Связь: ${String(data.get('contact') || 'По телефону')}`,
+      data.get('task') ? `Задача: ${String(data.get('task')).trim()}` : '',
+    ].filter(Boolean);
+    const href = `https://t.me/${form.dataset.telegram}?text=${encodeURIComponent(lines.join('\n'))}`;
+    if (fallback) fallback.href = href;
+    if (error) error.hidden = true;
+    if (done) done.hidden = false;
+    window.open(href, '_blank', 'noopener');
+  });
+</script>
+
+<style>
+  .form {
+    display: grid;
+    gap: var(--sp-4);
+  }
+
+  .form__intro,
+  .form__photo,
+  .form__alt,
+  .form__done {
+    margin: 0;
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+  }
+
+  .form__honeypot {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .field {
+    display: grid;
+    gap: var(--sp-2);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .field span,
+  legend {
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+  }
+
+  .field i {
+    color: var(--c-text-subtle);
+    font-style: normal;
+    font-weight: var(--fw-regular);
+  }
+
+  input[type='text'],
+  input[type='tel'],
+  select,
+  textarea {
+    width: 100%;
+    min-height: var(--tap-min);
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--r-md);
+    background: var(--c-bg);
+    color: var(--c-text);
+  }
+
+  textarea {
+    min-height: 7rem;
+    resize: vertical;
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+  }
+
+  .choice {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: 2.5rem;
+    color: var(--c-text);
+  }
+
+  .consent {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-snug);
+  }
+
+  .consent input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.15rem;
+    accent-color: var(--c-accent);
+  }
+
+  .form__error {
+    margin: 0;
+    color: var(--c-danger);
+    font-weight: var(--fw-semibold);
+  }
+
+  .form__done {
+    padding: var(--sp-4);
+    border-radius: var(--r-md);
+    background: var(--c-success-soft);
+    color: var(--c-text);
+  }
+</style>

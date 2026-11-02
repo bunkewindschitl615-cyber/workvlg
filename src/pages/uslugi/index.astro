@@ -1,6 +1,7 @@
 ---
 import PageHero from '@/components/blocks/PageHero.astro';
 import Process from '@/components/blocks/Process.astro';
+import ServiceGroups from '@/components/blocks/ServiceGroups.astro';
 import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
 import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
@@ -59,20 +60,27 @@ const hasDrafts = services.some((service) => !service.data.ownerConfirmed);
           </div>
 
           <div class="service-row__details">
-            {service.data.tasks.length > 0 || service.data.audience.length > 0 ? (
+            {service.data.groups.length > 0 || service.data.tasks.length > 0 || service.data.audience.length > 0 ? (
               <>
-                {service.data.tasks.length > 0 && (
-                  <div>
-                    <h3 class="service-row__subtitle">Какие задачи решаем</h3>
-                    <ul class="checklist">
-                      {service.data.tasks.map((task) => (
-                        <li>
-                          <Icon name="check" size={18} />
-                          {task}
-                        </li>
-                      ))}
-                    </ul>
+                {service.data.groups.length > 0 ? (
+                  <div class="service-row__groups">
+                    <h3 class="service-row__subtitle">Перечень работ</h3>
+                    <ServiceGroups groups={service.data.groups} as="h4" />
                   </div>
+                ) : (
+                  service.data.tasks.length > 0 && (
+                    <div>
+                      <h3 class="service-row__subtitle">Какие задачи решаем</h3>
+                      <ul class="checklist">
+                        {service.data.tasks.map((task) => (
+                          <li>
+                            <Icon name="check" size={18} />
+                            {task}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )
                 )}
                 {service.data.audience.length > 0 && (
                   <div>
@@ -207,6 +215,10 @@ const hasDrafts = services.some((service) => !service.data.ownerConfirmed);
     display: grid;
     gap: var(--sp-6);
     align-content: start;
+  }
+
+  .service-row__groups {
+    grid-column: 1 / -1;
   }
 
   @media (min-width: 640px) {

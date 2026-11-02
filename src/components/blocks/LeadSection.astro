@@ -1,4 +1,5 @@
 ---
+import LeadForm from '@/components/blocks/LeadForm.astro';
 import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
 import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
@@ -14,7 +15,7 @@ const afterRequest = [
   { icon: 'calculator', text: 'Определим объём работ и назовём стоимость' },
 ] as const;
 
-const prepare = ['Коротко опишите задачу', 'Приложите фото, если есть', 'Укажите населённый пункт'];
+const prepare = ['Коротко опишите задачу', 'Фото прикрепите в чате Telegram', 'Укажите населённый пункт'];
 ---
 
 <Section id="zayavka" tone="elevated" eyebrow="08 / Заявка" title="Оставьте заявку" lead="Опишите задачу — даже если не знаете, как она называется. Мы разберёмся и предложим решение.">
@@ -48,7 +49,7 @@ const prepare = ['Коротко опишите задачу', 'Приложит
     <div class="lead-panel">
       {
         features.leadForm ? (
-          <slot />
+          <LeadForm />
         ) : (
           <>
             <div class="lead-panel__status">

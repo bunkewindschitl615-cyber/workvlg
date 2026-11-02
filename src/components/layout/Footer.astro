@@ -4,6 +4,7 @@ import Icon from '@/components/ui/Icon.astro';
 import Logo from '@/components/ui/Logo.astro';
 import { contactChannels } from '@/config/contacts';
 import { LEAD_HREF, mainNav } from '@/config/navigation';
+import { url } from '@/lib/url';
 import { site } from '@/config/site';
 
 const year = new Date().getFullYear();
@@ -67,6 +68,10 @@ const legalNotes = contactChannels.flatMap((channel) => (channel.legalNote ? [ch
 
     <div class="site-footer__bottom">
       <p>© {year} {site.name}</p>
+      <p class="site-footer__legal">
+        <a href={url('/politika-konfidencialnosti/')}>Политика конфиденциальности</a>
+        <a href={url('/soglasie-na-obrabotku-pd/')}>Согласие на обработку данных</a>
+      </p>
       {legalNotes.map((note) => <p class="site-footer__note">* {note}</p>)}
     </div>
   </div>
@@ -190,5 +195,20 @@ const legalNotes = contactChannels.flatMap((channel) => (channel.legalNote ? [ch
 
   .site-footer__note {
     font-size: var(--fs-xs);
+  }
+
+  .site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-4);
+  }
+
+  .site-footer__legal a {
+    color: var(--c-text-subtle);
+    text-decoration: none;
+  }
+
+  .site-footer__legal a:hover {
+    color: var(--c-accent);
   }
 </style>

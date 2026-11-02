@@ -1,0 +1,32 @@
+---
+import PageHero from '@/components/blocks/PageHero.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import PageLayout from '@/layouts/PageLayout.astro';
+import { url } from '@/lib/url';
+---
+
+<PageLayout title="Согласие на обработку персональных данных" description="Отдельное согласие на передачу данных из заявки WORKVLG для ответа на обращение." noindex>
+  <PageHero breadcrumbs={[{ label: 'Согласие на обработку данных' }]} title="Согласие на обработку персональных данных">
+    <PlaceholderNotice kind="draft" subject="текст согласия" />
+  </PageHero>
+  <div class="container prose legal">
+    <p>
+      Согласие оформлено отдельно от других документов сайта. Это черновик: наименование и адрес оператора будут подставлены после того, как владелец бизнеса их подтвердит.
+    </p>
+    <h2>Что подтверждает отметка в форме</h2>
+    <ul>
+      <li>Цель: связаться с вами и обсудить заявку на работы.</li>
+      <li>Данные: имя, если указано, телефон, населённый пункт, направление и описание задачи.</li>
+      <li>Действие: вы сами отправляете это сообщение в Telegram WORKVLG.</li>
+      <li>Срок: до завершения обсуждения заявки и разумного срока после него, если не отзовёте согласие раньше.</li>
+      <li>Отзыв: напишите в тот же Telegram или позвоните по телефону на сайте и попросите не использовать данные.</li>
+    </ul>
+    <p>Подробнее о текущем порядке — в <a href={url('/politika-konfidencialnosti/')}>политике конфиденциальности</a>.</p>
+  </div>
+</PageLayout>
+
+<style>
+  .legal {
+    padding-block: var(--sp-12) var(--section-y);
+  }
+</style>

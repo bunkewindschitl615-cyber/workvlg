@@ -1,7 +1,7 @@
 ---
+import HeroSlider from '@/components/blocks/HeroSlider.astro';
 import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
-import MediaPlaceholder from '@/components/ui/MediaPlaceholder.astro';
 import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
 import { getChannel } from '@/config/contacts';
 import { LEAD_HREF } from '@/config/navigation';
@@ -42,7 +42,7 @@ const phone = getChannel('phone');
     </div>
 
     <div class="hero__media">
-      <MediaPlaceholder label="Фото реального объекта WORKVLG" ratio="4 / 5" icon="building" />
+      <HeroSlider />
       <ul class="hero__facts">
         {
           hero.facts.map((fact) => (
@@ -53,7 +53,7 @@ const phone = getChannel('phone');
           ))
         }
       </ul>
-      <PlaceholderNotice subject="блок фотографии" class="hero__notice" />
+      <PlaceholderNotice subject="слайды" class="hero__notice" />
     </div>
   </div>
 </section>
@@ -193,7 +193,7 @@ const phone = getChannel('phone');
     .hero__facts {
       position: absolute;
       left: calc(-1 * var(--sp-8));
-      bottom: var(--sp-16);
+      bottom: 8.5rem;
       grid-template-columns: 1fr;
       width: 15rem;
     }

@@ -1,0 +1,83 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+
+interface Group {
+  title: string;
+  items: string[];
+}
+
+interface Props {
+  groups: Group[];
+  /** Heading level: the block sits under a section or a direction title. */
+  as?: 'h3' | 'h4';
+  layout?: 'stack' | 'grid';
+}
+
+const { groups, as: Heading = 'h3', layout = 'stack' } = Astro.props;
+---
+
+<div class:list={['groups', layout === 'grid' && 'groups--grid']}>
+  {
+    groups.map((group) => (
+      <section class="group">
+        <Heading class="group__title">{group.title}</Heading>
+        <ul>
+          {group.items.map((item) => (
+            <li>
+              <Icon name="check" size={16} />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .groups {
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  @media (min-width: 768px) {
+    .groups--grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-8) var(--sp-10);
+    }
+  }
+
+  .group__title {
+    margin: 0 0 var(--sp-2);
+    color: var(--c-text);
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0;
+    line-height: var(--lh-snug);
+    text-transform: none;
+  }
+
+  ul {
+    display: grid;
+    gap: var(--sp-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-2);
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-snug);
+  }
+
+  li :global(.icon) {
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--c-accent);
+  }
+</style>

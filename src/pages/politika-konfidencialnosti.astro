@@ -1,0 +1,33 @@
+---
+import PageHero from '@/components/blocks/PageHero.astro';
+import PlaceholderNotice from '@/components/ui/PlaceholderNotice.astro';
+import PageLayout from '@/layouts/PageLayout.astro';
+import { url } from '@/lib/url';
+---
+
+<PageLayout title="Политика конфиденциальности" description="Какие данные оставляет посетитель сайта WORKVLG и как они передаются." noindex>
+  <PageHero breadcrumbs={[{ label: 'Политика конфиденциальности' }]} title="Политика конфиденциальности">
+    <PlaceholderNotice kind="draft" subject="текст политики" />
+  </PageHero>
+  <div class="container prose legal">
+    <p>
+      Этот текст — рабочий черновик. В нём нет реквизитов оператора: их нужно подтвердить до публикации окончательной редакции. Сайт не заявляет о полном соответствии 152-ФЗ, пока реквизиты и порядок хранения не зафиксированы.
+    </p>
+    <h2>Какие данные можно указать</h2>
+    <p>Имя, телефон, населённый пункт, направление работ и описание задачи. Эти сведения нужны только чтобы ответить на обращение.</p>
+    <h2>Куда они попадают сейчас</h2>
+    <p>
+      Сайт не сохраняет заявку у себя. После проверки формы открывается Telegram, и сообщение отправляете вы сами в чат WORKVLG. Пока собственный сервер не подключён, отдельной базы заявок на сайте нет.
+    </p>
+    <h2>Согласие</h2>
+    <p>
+      Перед отправкой нужно отдельно отметить <a href={url('/soglasie-na-obrabotku-pd/')}>согласие на обработку персональных данных</a>. Его можно не давать — тогда заявка через форму не формируется, остаются звонок и Telegram.
+    </p>
+  </div>
+</PageLayout>
+
+<style>
+  .legal {
+    padding-block: var(--sp-12) var(--section-y);
+  }
+</style>
